@@ -14,6 +14,12 @@ namespace Weapone
     /// enum에 타입 추가
     /// BulletSelect()의 switch문에
     /// 타입에 맞는 오브젝트 풀링을 적용 시키면 된다
+    /// 
+    /// Main에서는 총을 장착하고 사격하는 기능이 없기 떄문에
+    /// 임시로 무기 데이터를 싱글턴에 적용 했다가
+    /// 플레이씬이 시작되면
+    /// 싱글턴에서 데이터를 받아 초기화 시킨다
+    /// 
     /// </summary>
     [Serializable]
     public enum BulletType
@@ -23,6 +29,7 @@ namespace Weapone
 
     public class GunCtrl : WeaponeData
     {
+        #region 탄 발사
         [SerializeField, Header("탄의 외형을 설정한다")]
         BulletType bulletType;
 
@@ -32,14 +39,21 @@ namespace Weapone
         [SerializeField, Header("총구 화염")]
         GameObject m_objMuzzle;
         ParticleSystem[] m_parMuzzle;
+        #endregion
 
-       protected PlayerCtrl player;
+        protected PlayerCtrl player;
 
         MemoryPooling m_Pool;
 
         bool isReload = false;
 
         WeaponeAmmoUI m_WeaponeUI;
+
+        //파싱 된 데이터 리스트에서 데이터를 가져오는 역할
+        WeaponeParsing weaponeParsing;
+        [SerializeField, Header("적용 시킬 무기의 이름")]
+        string m_WeaponeName;
+
 
         protected virtual void Start()
         {
@@ -51,16 +65,56 @@ namespace Weapone
             m_parMuzzle = m_objMuzzle.GetComponentsInChildren<ParticleSystem>();
             m_Pool = GameObject.Find("Manager/MemoryPool").GetComponent<MemoryPooling>();
 
+            weaponeParsing = GameObject.Find("ParsingData").GetComponent<WeaponeParsing>();
+
             m_WeaponeUI = GetComponent<WeaponeAmmoUI>();
             m_WeaponeUI.WeaponeBarUI(this);
+
+            //무기 데이터 적용
+            WeaponeDataInit();
         }
+
+        /// <summary>
+        /// 임시 초기화 태스트
+        /// 게임메니저에서 데이터를 받아와야 한다
+        /// </summary>
+        void WeaponeDataInit()
+        {
+            for(int i=0;i<weaponeParsing.weaponeList.Count;i++)
+            {
+                if(m_WeaponeName.Equals(weaponeParsing.weaponeList[i].WeaponeName))
+                {
+                    Id = weaponeParsing.weaponeList[i].Id;
+                    WeaponeName = weaponeParsing.weaponeList[i].WeaponeName;
+                    ItemIconPath = weaponeParsing.weaponeList[i].ItemIconPath;
+                    Type = weaponeParsing.weaponeList[i].Type;
+                    WeaponeType = weaponeParsing.weaponeList[i].WeaponeType;
+
+                    FMinDmgF = weaponeParsing.weaponeList[i].FMinDmgF;
+                    FMinDmgE = weaponeParsing.weaponeList[i].FMinDmgE;
+
+                    FMinDmgF = weaponeParsing.weaponeList[i].FMinDmgF;
+                    FMaxDmgE = weaponeParsing.weaponeList[i].FMaxDmgE;
+
+                    weaponeParsing.weaponeList[i].FMinDmg = UnityEngine.Random.Range(FMinDmgF, FMinDmgE);
+                    weaponeParsing.weaponeList[i].MaxDmg = UnityEngine.Random.Range(FMaxDmgF, FMaxDmgE);
+
+                    FMinDmg = weaponeParsing.weaponeList[i].FMinDmg;
+                    MaxDmg = weaponeParsing.weaponeList[i].MaxDmg;
+
+                    NMag = weaponeParsing.weaponeList[i].NMag;
+                    NCurBullet = weaponeParsing.weaponeList[i].NCurBullet;
+                }
+            }
+        }
+
 
         protected virtual void Fire()
         {
             if(Input .GetKeyDown(KeyCode.O))
             {
                 if(!isReload &&
-                    NCurBullet>0)
+                    NCurBullet > 0)
                 {
                     BulletSelect();
 

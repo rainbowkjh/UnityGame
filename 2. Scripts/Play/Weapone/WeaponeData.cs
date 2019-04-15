@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 namespace Weapone
 {
@@ -15,6 +15,7 @@ namespace Weapone
        AR, SG, SMG, SR,
     }
 
+    [Serializable]
     public class WeaponeData : MonoBehaviour
     {
         int id = 0;
@@ -34,7 +35,11 @@ namespace Weapone
 
         float m_fMaxDmgF = 150;
         float m_fMaxDmgE = 200;
-        
+
+        //무기마다 실제 적용되는 데미지
+        float m_fMinDmg = 0;
+        float m_MaxDmg = 0;
+
         //탄창안의 최대 탄 수
         int m_nMag = 30;
         int m_nCurBullet = 30; // 현재 탄 수
@@ -180,6 +185,32 @@ namespace Weapone
             set
             {
                 m_nCurBullet = value;
+            }
+        }
+
+        public float FMinDmg
+        {
+            get
+            {
+                return m_fMinDmg;
+            }
+
+            set
+            {
+                m_fMinDmg = value;
+            }
+        }
+
+        public float MaxDmg
+        {
+            get
+            {
+                return m_MaxDmg;
+            }
+
+            set
+            {
+                m_MaxDmg = value;
             }
         }
         #endregion

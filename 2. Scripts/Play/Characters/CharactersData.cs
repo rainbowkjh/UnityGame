@@ -14,12 +14,13 @@ namespace Characters
     {
         CharState m_State = CharState.Idle;
         int m_nLevel = 1;
+        string m_sName = "";
         float m_fHP = 500.0f;
         float m_fMaxHP = 500.0f;
         float m_fMana = 200.0f;
         float m_fMaxMana = 200.0f;
         float m_fExp = 0;
-        float m_fNextExp = 0;
+        float m_fNextExp = 500;
         float m_fSpeed = 2.0f;
         float m_fSta = 200.0f;
         float m_fMaxSta = 200.0f;
@@ -172,13 +173,7 @@ namespace Characters
             set
             {
                 m_fExp = value;
-
-                if (m_fExp >= m_fNextExp)
-                {
-                    m_fExp = 0;
-                    m_nLevel++; //레벨 업
-                }
-                    
+  
             }
         }
 
@@ -220,6 +215,21 @@ namespace Characters
                 isRoll = value;
             }
         }
+
+        public string sName
+        {
+            get
+            {
+                return m_sName;
+            }
+
+            set
+            {
+                m_sName = value;
+            }
+        }
+
+
 
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using PlayUI;
+﻿using Manager;
+using PlayUI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace Characters
 
         PlayerUIEx m_uiBar;
 
+        int m_nParsingIndex = 0; //파싱된 리스트에서 가져올 인덱스 값
+
         protected override void Start()
         {
             base.Start();
@@ -30,6 +33,35 @@ namespace Characters
 
             UI_Init();
             m_trFirePos.localPosition = new Vector3(0, 1.3f, 0.9f);
+
+            DataInit();
+        }
+
+        /// <summary>
+        /// 메인 씬에서 게임 시작 시 저장 시킨 데이터를 캐릭터에 적용
+        /// </summary>
+        void DataInit()
+        {
+            if (GameManager.INSTANCE.isMale)
+            {
+                m_nParsingIndex = 1;
+            }
+            if (!GameManager.INSTANCE.isMale)
+            {
+                m_nParsingIndex = 0;
+            }
+
+
+            Manager.GameData.CharactersGameData loadData = GameManager.INSTANCE.gameData.Load(m_nParsingIndex);
+
+            NLevel = loadData.NLevel;
+            sName = loadData.SName;
+            FMaxHP = loadData.FMaxHP;
+            FHP = loadData.FHP;
+            FMaxMana = loadData.FMaxMana;
+            FMana = loadData.FMana;            
+            FExp = loadData.FExp;
+            FNextExp = loadData.FNextExp;
         }
 
         void UI_Init()
@@ -172,6 +204,13 @@ namespace Characters
             yield return new WaitForSeconds(1.5f);
             IsRoll = false;
         }
+
+        public void TestHP()
+        {
+            if (Input.GetKeyDown(KeyCode.Keypad0))
+                FHP -= 10;
+        }
+
     }
 
 }

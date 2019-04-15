@@ -31,6 +31,8 @@ namespace CtrlManager
                 Roll();
 
                 player.LiveAni(true);
+
+                player.TestHP();
             }
         }
 
