@@ -36,11 +36,7 @@ namespace MainScene
             bool m_isWeaponeAct = false;
             bool m_isUpgradeAct = false;
 
-            [SerializeField, Header("아이템 장착 시 아이콘 장착 위치, 0 무기, 1~2 아이템")]
-            Transform[] m_trEquipTr;
-
-            [SerializeField,Header("장착 슬롯에 생성 시킬 아이콘 프리펩")]
-            ItemData m_EquipIcon;
+        
 
             void Start()
             {
@@ -103,23 +99,25 @@ namespace MainScene
                 if (n == 0)
                 {
                     //장착 슬롯 하위 오브젝트가 있는지 확인
-                    if(m_trEquipTr[0].transform.childCount == 0)
+                    if(InventoryList.INVENTORY.TrEquipTr[0].transform.childCount == 0)
                     {
-                        ItemData icon = Instantiate(m_EquipIcon);
-                        icon.transform.SetParent(m_trEquipTr[0].transform);
+                        GameObject icon = Instantiate(InventoryList.INVENTORY.EquipIcon);
+                        icon.transform.SetParent(InventoryList.INVENTORY.TrEquipTr[0].transform);
                         icon.transform.localPosition = Vector3.zero;
                         icon.transform.localRotation = Quaternion.identity;
                         icon.transform.localScale = new Vector3(1,1,1);
 
-                        icon.WeaponeData = 
+                        icon.GetComponent<ItemData>().WeaponeData = 
                             _Item.ItemClick.ITEMICON.GetComponent<ItemData>().WeaponeData;
 
                         //데이터를 적용했는데 아이콘이 생성되면서
                         //다시 파싱 데이터 접근하는 것을 막음
-                        icon.isEquip = true;
+                        icon.GetComponent<ItemData>().isEquip = true;
 
                         //아이콘 이미지 적용 
-                        icon.SpriteApply();
+                        icon.GetComponent<ItemData>().SpriteApply();
+
+                        icon.GetComponent<ItemData>().WeaponeData.IsUse = true; //로드할때 사용중인 무기인지 구별
 
                         //아이템 장착 표시 활성화
                         _Item.ItemClick.ITEMICON.GetComponent<ItemClick>().ItemDataValue.UseIcon.SetActive(true);
@@ -149,9 +147,9 @@ namespace MainScene
             /// <param name="n"></param>
             public void UnEquipBtn(int n)
             {
-                if(m_trEquipTr[n].transform.childCount > 0)
+                if(InventoryList.INVENTORY.TrEquipTr[n].transform.childCount > 0)
                 {
-                    ItemData icon = m_trEquipTr[n].GetComponentInChildren<ItemData>();
+                    ItemData icon = InventoryList.INVENTORY.TrEquipTr[n].GetComponentInChildren<ItemData>();
 
                     if(icon.ItemType == Weapone.ItemType.Weapone)
                     {
@@ -159,10 +157,10 @@ namespace MainScene
                         //엄청난 확률로?? 데이터가 똑같은 아이템이 두개 있을경우 엉뚱하게 장착해제 할수 있다(수정 해야됨)
                         if (icon.WeaponeData == _Item.ItemClick.ITEMICON.GetComponent<ItemClick>().ItemDataValue.WeaponeData)
                         {
+                            icon.GetComponent<ItemData>().WeaponeData.IsUse = false; //로드할때 사용중인 무기인지 구별
                             _Item.ItemClick.ITEMICON.GetComponent<ItemClick>().ItemDataValue.UseIcon.SetActive(false);
                             Destroy(icon.gameObject);
                             BtnInit();
-
                         }
                     }
 
@@ -188,8 +186,13 @@ namespace MainScene
             /// </summary>
             public void DeleteBtn()
             {
-                //마지막에 클릭한 아이템을 삭제
-                Destroy(_Item.ItemClick.ITEMICON);
+                //사용하지 않고 있는 아이템만 삭제 가능
+                if(!_Item.ItemClick.ITEMICON.GetComponent<ItemClick>().ItemDataValue.WeaponeData.IsUse)
+                {
+                    //마지막에 클릭한 아이템을 삭제
+                    Destroy(_Item.ItemClick.ITEMICON);
+                }
+                
 
                 BtnInit();
             }

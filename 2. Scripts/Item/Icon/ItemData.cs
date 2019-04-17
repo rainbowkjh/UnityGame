@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Weapone;
+using System;
 
 namespace _Item
-{
+{   
     public class ItemData : MonoBehaviour
     {
 
@@ -35,7 +36,7 @@ namespace _Item
 
         //[SerializeField, Header("아이템 습득 상태(습득 되었으면 파싱 데이터에서 초기화하지 않는다")]
         public bool isEquip = false;
-
+ 
         #region Set,Get
         public ItemType ItemType
         {
@@ -124,8 +125,8 @@ namespace _Item
                         WeaponeData.Type = m_Parsing.weaponeList[i].Type;
                         WeaponeData.WeaponeType = m_Parsing.weaponeList[i].WeaponeType;
 
-                        float randMin = Random.Range(m_Parsing.weaponeList[i].FMinDmgF, m_Parsing.weaponeList[i].FMinDmgE);
-                        float randMax = Random.Range(m_Parsing.weaponeList[i].FMaxDmgF, m_Parsing.weaponeList[i].FMaxDmgE);
+                        float randMin = UnityEngine.Random.Range(m_Parsing.weaponeList[i].FMinDmgF, m_Parsing.weaponeList[i].FMinDmgE);
+                        float randMax = UnityEngine.Random.Range(m_Parsing.weaponeList[i].FMaxDmgF, m_Parsing.weaponeList[i].FMaxDmgE);
 
                         WeaponeData.FMinDmg = randMin;
                         WeaponeData.MaxDmg = randMax;

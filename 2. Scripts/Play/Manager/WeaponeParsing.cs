@@ -1,4 +1,5 @@
-﻿using Characters;
+﻿using _Item;
+using Characters;
 using Manager.GameData;
 using System;
 using System.Collections;
@@ -51,6 +52,8 @@ namespace Manager
             //탄창안의 최대 탄 수
             int m_nMag = 30;
             int m_nCurBullet = 30; // 현재 탄 수
+
+            bool m_isUse = false; //로드 할때 사용 중이였던 무기 였는지 확인 후 표시
 
             #region Set,Get
             public int Id
@@ -221,6 +224,19 @@ namespace Manager
                     m_MaxDmg = value;
                 }
             }
+
+            public bool IsUse
+            {
+                get
+                {
+                    return m_isUse;
+                }
+
+                set
+                {
+                    m_isUse = value;
+                }
+            }
             #endregion
 
         }
@@ -243,6 +259,9 @@ namespace Manager
             float m_fMaxSta = 200.0f;
             bool isJump = false;
             bool isRoll = false;
+
+            List<WeaponeGameData> m_WeaponeList = new List<WeaponeGameData>();
+            WeaponeGameData m_EquipWeapone = new WeaponeGameData(); //장착 슬롯에 있는 무기(플레이 씬에서 무기 오브젝트 생성)
 
             #region Set,Get
             public float FHP
@@ -460,6 +479,34 @@ namespace Manager
                     m_sName = value;
                 }
             }
+
+            public List<WeaponeGameData> WeaponeList
+            {
+                get
+                {
+                    return m_WeaponeList;
+                }
+
+                set
+                {
+                    m_WeaponeList = value;
+                }
+            }
+
+            public WeaponeGameData EquipWeapone
+            {
+                get
+                {
+                    return m_EquipWeapone;
+                }
+
+                set
+                {
+                    m_EquipWeapone = value;
+                }
+            }
+
+
 
 
             #endregion

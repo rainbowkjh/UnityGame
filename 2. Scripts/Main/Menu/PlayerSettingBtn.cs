@@ -39,7 +39,8 @@ namespace MainScene
             Text m_txtPlayerInfo;
 
             private void Start()
-            {                
+            {
+                
                 SkinInit();
                 PlayerParsingDataApply();              
             }
@@ -191,7 +192,7 @@ namespace MainScene
                     m_PlayerData.FMana = loadData.FMana;                    
                     m_PlayerData.FExp = loadData.FExp;
                     m_PlayerData.FNextExp = loadData.FNextExp;
-
+                
                     //Debug.Log("Load Data HP : " + m_PlayerData.FHP);
                 }
 

@@ -18,9 +18,24 @@ namespace MainScene
 
             bool isAct = false;
 
+            [SerializeField, Header("활성화 시킬 UI 오브젝트 경로")]
+            string uiPath;
+
+            private void OnEnable()
+            {
+                UiInit();
+            }
+
             private void Start()
             {
+            
                 m_objUI.SetActive(false);
+            }
+
+            private void UiInit()
+            {
+
+                m_objUI = GameObject.Find(uiPath);
             }
 
             private void OnTriggerStay(Collider other)

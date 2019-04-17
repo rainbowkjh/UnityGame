@@ -24,6 +24,21 @@ namespace Characters
 
         int m_nParsingIndex = 0; //파싱된 리스트에서 가져올 인덱스 값
 
+        #region Set,Get
+        public int NParsingIndex
+        {
+            get
+            {
+                return m_nParsingIndex;
+            }
+
+            set
+            {
+                m_nParsingIndex = value;
+            }
+        }
+        #endregion
+
         protected override void Start()
         {
             base.Start();
@@ -44,15 +59,15 @@ namespace Characters
         {
             if (GameManager.INSTANCE.isMale)
             {
-                m_nParsingIndex = 1;
+                NParsingIndex = 1;
             }
             if (!GameManager.INSTANCE.isMale)
             {
-                m_nParsingIndex = 0;
+                NParsingIndex = 0;
             }
 
 
-            Manager.GameData.CharactersGameData loadData = GameManager.INSTANCE.gameData.Load(m_nParsingIndex);
+            Manager.GameData.CharactersGameData loadData = GameManager.INSTANCE.gameData.Load(NParsingIndex);
 
             NLevel = loadData.NLevel;
             sName = loadData.SName;

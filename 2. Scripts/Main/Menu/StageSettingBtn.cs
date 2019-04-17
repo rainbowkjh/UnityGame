@@ -1,6 +1,7 @@
 ﻿using _Item;
 using Characters;
 using Manager;
+using Manager.GameData;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,8 +27,11 @@ namespace MainScene
             [SerializeField, Header("게임 시작 시 저장 시킬 플레이어")]
             CharactersData playerData;
 
-            [SerializeField, Header("인벤토리 정보")]
-            InventoryList inventory;
+            //[SerializeField, Header("인벤토리 정보")]
+            //InventoryList inventory;
+
+            //[SerializeField,Header("장착슬롯의 정보를 가져와야 한다")]
+            //WeaponeSettingBtn m_EquipWeapone;
 
             private void Start()
             {
@@ -78,20 +82,37 @@ namespace MainScene
                 //게임이 시작 되기전에 플레이어 데이터를 저장한다
                 if (GameManager.INSTANCE.isMale)
                 {
-                    //Debug.Log("인벤 저장 전");
-                    ////인벤 정보를 저장한다
-                    //playerData.ItemList = inventory.GetInventoryItem();
-                    //Debug.Log("저장 후");
+                    if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() != null)
+                    {
+                        //무기 장착 슬롯으 0 인덱스
+                        GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
+                            InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 1);                        
+                    }
 
-                    GameManager.INSTANCE.gameData.Save(playerData, 1);
+                    else if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() == null)
+                    {
+                        GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
+                            null, 1);
+                    }
                     Debug.Log("데이터 저장");
                 }
 
                 else
-                {   
-                    GameManager.INSTANCE.gameData.Save(playerData, 0);
+                {
+                    if (InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() != null )
+                    {
+                        GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
+                        InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 0);
+                    }
+                    
+                    else if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() == null)
+                    {
+                        GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
+                            null, 0);
+                    }
                 }
 
+                gameObject.SetActive(false);
                 SceneManager.LoadScene("Stage" + m_nStageIndex);
             }
         }

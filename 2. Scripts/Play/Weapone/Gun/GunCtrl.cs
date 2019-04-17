@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using PlayUI;
+using Manager.GameData;
 
 namespace Weapone
 {
@@ -24,7 +25,8 @@ namespace Weapone
     [Serializable]
     public enum BulletType
     {
-        ArrowBlue, ArrowGreen,
+        ArrowBlue, ArrowGreen, BubbleRose, BulletGreen, BulletOrange, CometBlue,
+        ElectricOrangeBall, Feather, Fireball, RadioactiveBall, SpellOrange, SpinYellow,
     }
 
     public class GunCtrl : WeaponeData
@@ -41,19 +43,35 @@ namespace Weapone
         ParticleSystem[] m_parMuzzle;
         #endregion
 
+        WeaponeGameData data;
+
         protected PlayerCtrl player;
 
         MemoryPooling m_Pool;
 
-        bool isReload = false;
+        protected bool isReload = false;
 
-        WeaponeAmmoUI m_WeaponeUI;
+       protected WeaponeAmmoUI m_WeaponeUI;
 
         //파싱 된 데이터 리스트에서 데이터를 가져오는 역할
         WeaponeParsing weaponeParsing;
         [SerializeField, Header("적용 시킬 무기의 이름")]
-        string m_WeaponeName;
+        private string m_WeaponeName;
 
+        public bool isEquip = false;
+
+        public string WeaponeNameSearch
+        {
+            get
+            {
+                return m_WeaponeName;
+            }
+
+            set
+            {
+                m_WeaponeName = value;
+            }
+        }
 
         protected virtual void Start()
         {
@@ -70,8 +88,12 @@ namespace Weapone
             m_WeaponeUI = GetComponent<WeaponeAmmoUI>();
             m_WeaponeUI.WeaponeBarUI(this);
 
-            //무기 데이터 적용
-            WeaponeDataInit();
+            if(!isEquip)
+            {
+                //무기 데이터 적용
+                WeaponeDataInit();
+            }
+            
         }
 
         /// <summary>
@@ -82,8 +104,10 @@ namespace Weapone
         {
             for(int i=0;i<weaponeParsing.weaponeList.Count;i++)
             {
-                if(m_WeaponeName.Equals(weaponeParsing.weaponeList[i].WeaponeName))
+                if(WeaponeNameSearch.Equals(weaponeParsing.weaponeList[i].WeaponeName))
                 {
+                    //Debug.Log("무기 데이터 초기화");
+
                     Id = weaponeParsing.weaponeList[i].Id;
                     WeaponeName = weaponeParsing.weaponeList[i].WeaponeName;
                     ItemIconPath = weaponeParsing.weaponeList[i].ItemIconPath;
@@ -106,8 +130,25 @@ namespace Weapone
                     NCurBullet = weaponeParsing.weaponeList[i].NCurBullet;
                 }
             }
+
         }
 
+
+        /// <summary>
+        /// 다른곳에서 데이터를 호출하기 위해 (사실 코드가 꼬였다...)
+        /// 호출할때 필요한 정보만 저장
+        /// </summary>
+       public void DataSave()
+        {
+            data = new WeaponeGameData();
+            data.Id = Id;
+            data.WeaponeName = WeaponeName;
+            data.Type = Type;
+            data.WeaponeType = WeaponeType;
+            data.FMinDmg = FMinDmg;
+            data.MaxDmg = MaxDmg;
+            data.NMag = NMag;
+        }
 
         protected virtual void Fire()
         {
@@ -116,6 +157,8 @@ namespace Weapone
                 if(!isReload &&
                     NCurBullet > 0)
                 {
+                    //Debug.Log("단발");
+
                     BulletSelect();
 
                     NCurBullet--;
@@ -175,6 +218,47 @@ namespace Weapone
                 case BulletType.ArrowGreen:
                     obj = m_Pool.GetObjPool(m_Pool.ArrowGreenCount, m_Pool.ArrowGreenList);
                     break;
+
+                case BulletType.BubbleRose:
+                    obj = m_Pool.GetObjPool(m_Pool.BubbleRoseCount, m_Pool.BubbleRoseList);
+                    break;
+
+                case BulletType.BulletGreen:
+                    obj = m_Pool.GetObjPool(m_Pool.BulletGreenCount, m_Pool.BulletGreenList);
+                    break;
+
+                case BulletType.BulletOrange:
+                    obj = m_Pool.GetObjPool(m_Pool.BulletOrangeCount, m_Pool.BulletOrangeList);
+                    break;
+
+                case BulletType.CometBlue:
+                    obj = m_Pool.GetObjPool(m_Pool.CometBlueCount, m_Pool.CometBlueList);
+                    break;
+
+                case BulletType.ElectricOrangeBall:
+                    obj = m_Pool.GetObjPool(m_Pool.ElectricOrangeBallCount, m_Pool.ElectricOrangeBallList);
+                    break;
+
+                case BulletType.Feather:
+                    obj = m_Pool.GetObjPool(m_Pool.FeatherCount, m_Pool.FeatherList);
+                    break;
+
+                case BulletType.Fireball:
+                    obj = m_Pool.GetObjPool(m_Pool.FireballCount, m_Pool.FireballList);
+                    break;
+
+                case BulletType.RadioactiveBall:
+                    obj = m_Pool.GetObjPool(m_Pool.RadioactiveBallCount, m_Pool.RadioactiveBallList);
+                    break;
+
+                case BulletType.SpellOrange:
+                    obj = m_Pool.GetObjPool(m_Pool.SpellOrangeCount, m_Pool.SpellOrangeList);
+                    break;
+
+                case BulletType.SpinYellow:
+                    obj = m_Pool.GetObjPool(m_Pool.SpinYellowCount, m_Pool.SpinYellowList);
+                    break;
+
             }
 
             if (obj != null)
@@ -183,6 +267,7 @@ namespace Weapone
                 obj.transform.rotation = m_trFirePos.rotation;
 
                 obj.GetComponent<BulletCtrl>().IsPlayerBullet = true;
+                obj.GetComponent<BulletCtrl>().FDmg = UnityEngine.Random.Range(FMinDmg, MaxDmg);
 
                 obj.SetActive(true);
             }

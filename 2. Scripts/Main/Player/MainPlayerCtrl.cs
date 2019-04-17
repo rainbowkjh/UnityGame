@@ -24,9 +24,11 @@ namespace MainScene
             readonly int hashWalk = Animator.StringToHash("Walk");
             readonly int hashUse = Animator.StringToHash("Use");
 
+            public object InvetoryList { get; private set; }
+
             void Start()
             {
-                ani = GetComponent<Animator>();                
+                ani = GetComponent<Animator>();              
             }
 
             

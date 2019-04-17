@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using _Item;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 namespace Characters
 {
@@ -10,6 +11,7 @@ namespace Characters
         Idle, Walk, Run, Crouch, Hit, Dead,
     }
 
+    [SerializeField]
     public class CharactersData : MonoBehaviour
     {
         CharState m_State = CharState.Idle;
@@ -228,8 +230,6 @@ namespace Characters
                 m_sName = value;
             }
         }
-
-
 
         #endregion
     }

@@ -14,8 +14,11 @@ namespace Characters
         /// <summary>
         /// 대부분 적은 특정 위치에서 일정 간격으로 공격을 한다
         /// </summary>
-        [SerializeField, Header("위치 고정(t :추적 안함)")]
+        [SerializeField, Header("위치 고정(t :추적 안함")]
         bool isLookup = false;
+
+        [SerializeField, Header("true : x, y, z좌표를 이용해 바라본다")]
+        bool isLookFree = false;
 
         /// <summary>
         /// 범위에 들어오면 추적 시작
@@ -90,7 +93,13 @@ namespace Characters
         protected override void EnemyAttack()
         {
             base.EnemyAttack();
-            transform.LookAt(new Vector3(m_trTarget.position.x,transform.position.y, transform.position.z));
+            if (isLookFree)
+            {
+                transform.LookAt(new Vector3(m_trTarget.position.x, transform.position.y, m_trTarget.position.z));
+            }
+
+            else if (!isLookFree)
+                transform.LookAt(new Vector3(m_trTarget.position.x, transform.position.y, transform.position.z));
         }
 
     }

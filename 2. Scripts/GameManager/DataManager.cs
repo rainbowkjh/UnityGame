@@ -1,4 +1,5 @@
-﻿using Characters;
+﻿using _Item;
+using Characters;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +30,8 @@ namespace Manager
             }
 
 
-           public void Save(CharactersData data, int saveSlot)
+           public void Save(CharactersData data, List<WeaponeGameData> itemList,
+                            WeaponeGameData equipWeaponeList, int saveSlot)
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 FileStream file = File.Create(dataPath[saveSlot]);
@@ -45,8 +47,9 @@ namespace Manager
                 saveData.FMana = data.FMana;                
                 saveData.FExp = data.FExp;
                 saveData.FNextExp = data.FNextExp;
-
-                
+                                
+                saveData.WeaponeList = itemList;
+                saveData.EquipWeapone = equipWeaponeList;
 
                 bf.Serialize(file, saveData);
                 file.Close();

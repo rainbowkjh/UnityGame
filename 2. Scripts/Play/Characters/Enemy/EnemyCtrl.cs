@@ -4,6 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Weapone;
 
+
+/// <summary>
+/// ???? 적 캐릭터는 간단하게 몰아서 코딩하다보니;;;
+/// 공격 부분을 무의미하게 반복 사용하는 코드가 있음;;
+/// 플레이어의 경우 무기에서(GunCtrl) 제어
+/// 적의 경우 자체에서 해결하다보니
+/// 똑같은 코드를 사용하게됨
+/// 완성 후에 관리를 위해 코드 수정! -GunCtrl에서 관리하도록
+/// </summary>
 namespace Characters
 {
     public class EnemyCtrl : AniCtrl
@@ -15,14 +24,25 @@ namespace Characters
         [SerializeField, Header("앉고 서있을때 높이 조절(탄 발사위치)")]
         Transform m_trFirePos;
 
+        [SerializeField, Header("HP 세팅 값")]
+        float m_fHPSetting;
+
+        [SerializeField, Header("적이 쓰러질때 획득할 경험치")]
+        float m_fMinExp = 10.0f;
+        [SerializeField, Header("적이 쓰러질때 획득할 경험치")]
+        float m_fMaxExp = 30.0f;
+
         #region Weapone
+
         /// <summary>
         /// 적의 무기 발사 제어
         /// </summary>
         int m_MagBullet = 30;
         int m_MaxBulelt = 30;
 
+        [SerializeField,Header("최소 공격 데미지")]
         float m_fMinDmg = 25;
+        [SerializeField, Header("최대 공격 데미지")]
         float m_fMaxDmg = 50;
 
         float m_fBulletSpeed = 5;
@@ -30,8 +50,9 @@ namespace Characters
         bool mReload = false;
 
         [SerializeField, Header("발사 간격")]
-        float m_fFireDelay = 0.5f;
+        float m_fFireDelay = 1.0f;
         float m_fTime = 0.0f;
+        float m_fFireRand = 0.0f; //발사 간격을 지정한 값 기준으로 랜덤 값으로 결정 m_fFireDelay ~ 2.0f
 
         [SerializeField, Header("총구 화염")]
         GameObject m_objMuzzle;
@@ -52,6 +73,9 @@ namespace Characters
             m_parMuzzle = m_objMuzzle.GetComponentsInChildren<ParticleSystem>();
             m_Pool = GameObject.Find("Manager/MemoryPool").GetComponent<MemoryPooling>();
 
+            FHP = m_fHPSetting;
+
+            m_fFireRand = Random.Range(m_fFireDelay, 2.0f);
         }
 
         #region
@@ -77,10 +101,10 @@ namespace Characters
             RunAni(false);
         }
 
-        protected virtual void EnemyJump()
-        {
+        //protected virtual void EnemyJump()
+        //{
 
-        }
+        //}
 
         protected virtual void EnemyAttack()
         {
@@ -88,7 +112,7 @@ namespace Characters
             {
                 if(Time.time >= m_fTime)
                 {
-                    m_fTime = Time.time + m_fFireDelay + Random.Range(0.0f, 0.3f);
+                    m_fTime = Time.time + m_fFireRand + Random.Range(0.0f, 0.3f);
                     m_MagBullet--;
                     BulletSelect();
                     FireAni();
