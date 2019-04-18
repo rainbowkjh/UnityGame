@@ -91,25 +91,26 @@ namespace Characters
      /// 서있는 상태에서만 이동
      /// </summary>
      /// <param name="h"></param>
-        public void PlayerMove(float h)
+        public void PlayerMove(float h, float v)
         {
             if(State != CharState.Crouch
                 && !IsRoll)
             {
-
-                Vector3 dir = new Vector3(h, 0, 0).normalized;
+                //이동 방향(좌 우)
+                Vector3 dir = new Vector3(h, 0, v).normalized;
                 bool isMove = false;
 
-                if (h > 0 || h < 0)
+                if (h != 0 || v != 0)
                 {
-                    PlayerRot(h);
-
+                    
                     //State = CharState.Walk;
                     State = CharState.Run;
                     isMove = true;
+
+                    transform.rotation = Quaternion.LookRotation(dir);
                 }
 
-                else if (h == 0)
+                else if (h == 0 && v == 0)
                 {
                     State = CharState.Idle;
                     isMove = false;
@@ -117,26 +118,32 @@ namespace Characters
 
                 transform.Translate(dir * FSpeed * Time.deltaTime, Space.World);
 
+                
                 //WalkAni(isMove);
                 RunAni(isMove);
             }
 
+            
+            //  PlayerRot(h, v);
         }
-        
+
         /// <summary>
         /// 플레이어가 바라보는 방향을 결정한다
         /// </summary>
         /// <param name="h"></param>
-        private void PlayerRot(float h)
+        private void PlayerRot(float h, float v)
         {
-            if(h>0)
+
+            if (h > 0)
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0);
             }
+
             if (h < 0)
             {
                 transform.rotation = Quaternion.Euler(0, 270, 0);
             }
+
 
         }
 

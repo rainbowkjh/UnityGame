@@ -173,9 +173,11 @@ namespace MainScene
                     m_PlayerData.NLevel = m_Parsing.CharList[m_nParsingIndex].NLevel;
                     m_PlayerData.sName = m_Parsing.CharList[m_nParsingIndex].SName;
                     m_PlayerData.FMaxHP = m_Parsing.CharList[m_nParsingIndex].FMaxHP;
-                    m_PlayerData.FHP = m_Parsing.CharList[m_nParsingIndex].FHP;
+                    //m_PlayerData.FHP = m_Parsing.CharList[m_nParsingIndex].FHP;
+                    m_PlayerData.FHP = m_PlayerData.FMaxHP; //HP를 가득 채워준다
                     m_PlayerData.FMaxMana = m_Parsing.CharList[m_nParsingIndex].FMaxMana;
-                    m_PlayerData.FMana = m_Parsing.CharList[m_nParsingIndex].FMana;                    
+                    //m_PlayerData.FMana = m_Parsing.CharList[m_nParsingIndex].FMana;                    
+                    m_PlayerData.FMana = m_PlayerData.FMaxMana;
                     m_PlayerData.FExp = m_Parsing.CharList[m_nParsingIndex].FExp;
                     m_PlayerData.FNextExp = m_Parsing.CharList[m_nParsingIndex].FNextExp;
                 }
@@ -187,9 +189,11 @@ namespace MainScene
                     m_PlayerData.NLevel = loadData.NLevel;
                     m_PlayerData.sName = loadData.SName;
                     m_PlayerData.FMaxHP = loadData.FMaxHP;
-                    m_PlayerData.FHP = loadData.FHP;
+                    // m_PlayerData.FHP = loadData.FHP;
+                    m_PlayerData.FHP = m_PlayerData.FMaxHP; //HP를 가득 채워준다
                     m_PlayerData.FMaxMana = loadData.FMaxMana;
-                    m_PlayerData.FMana = loadData.FMana;                    
+                    // m_PlayerData.FMana = loadData.FMana;                    
+                    m_PlayerData.FMana = m_PlayerData.FMaxMana;
                     m_PlayerData.FExp = loadData.FExp;
                     m_PlayerData.FNextExp = loadData.FNextExp;
                 

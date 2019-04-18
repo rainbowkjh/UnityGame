@@ -17,47 +17,53 @@ namespace Characters
         AniCtrl ani;
 
         [SerializeField, Header("바닥 레이로 체크, 레이 시작 지점")]
-        Transform m_trRay;
+        Transform[] m_trRay;
 
         bool isDropAni = false;
 
         private void LateUpdate()
         {
             RaycastHit hit;
-                        
-            //캐릭터가 땅에 있을때
-            //착지 애니메이션 실행
-            if (Physics.Raycast(m_trRay.position, m_trRay.transform.forward, out hit, 1))
+                   
+            for(int i=0;i<m_trRay.Length;i++)
             {
-                Debug.DrawLine(m_trRay.position, hit.point, Color.yellow); //레이 작동 확인
-
-                if (hit.transform.tag.Equals("Ground"))
-                {                    
-                    //  Debug.Log("Ground");
-                    //점프 애니메이션
-                    ani.GroundAni(true);
-                    ani.IsJump = false; // <- 점프랑 충돌 발생으로 2~3단 점프가 된다(레이 길이를 1로 줄여서 해결)
-
-                    isDropAni = false;
-
-                }
-
-            }
-
-            //점프 안하고 내려갈때
-            else
-            {                   
-                ani.IsJump = true;
-                ani.GroundAni(false);
-
-                //연속으로 트리거 동작 하지 못하도록 함
-                if(!isDropAni)
+                //캐릭터가 땅에 있을때
+                //착지 애니메이션 실행
+                if (Physics.Raycast(m_trRay[i].position, m_trRay[i].transform.forward, out hit, 1))
                 {
-                    isDropAni = true;
-                    ani.DropAni();                    
+                    Debug.DrawLine(m_trRay[i].position, hit.point, Color.yellow); //레이 작동 확인
+
+                    if (hit.transform.tag.Equals("Ground"))
+                    {
+                        //  Debug.Log("Ground");
+                        //점프 애니메이션
+                        ani.GroundAni(true);
+                        ani.IsJump = false; // <- 점프랑 충돌 발생으로 2~3단 점프가 된다(레이 길이를 1로 줄여서 해결)
+
+                        isDropAni = false;
+
+                        //레이 중 하나라도 땅을 감지하면 루프를 나간다
+                        break;
+                    }
+
                 }
-                
+
+                //점프 안하고 내려갈때
+                else
+                {
+                    ani.IsJump = true;
+                    ani.GroundAni(false);
+
+                    //연속으로 트리거 동작 하지 못하도록 함
+                    if (!isDropAni)
+                    {
+                        isDropAni = true;
+                        ani.DropAni();
+                    }
+
+                }
             }
+            
         }
 
 

@@ -26,8 +26,8 @@ namespace CtrlManager
             if(player.State != CharState.Dead)
             {               
                 Move();
-                Crouch();
-                Jump();
+                //Crouch();
+                //Jump();
                 Roll();
 
                 player.LiveAni(true);
@@ -39,8 +39,9 @@ namespace CtrlManager
         void Move()
         {            
             float h = Input.GetAxisRaw("Horizontal");
+            float v = Input.GetAxis("Vertical");
 
-            player.PlayerMove(h);
+            player.PlayerMove(h, v);
         }
 
         void Crouch()

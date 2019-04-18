@@ -68,7 +68,7 @@ namespace Characters
                         obj.GetComponent<WeaponeData>().NMag = m_Data.NMag;
                         obj.GetComponent<GunCtrl>().isEquip = true; //
 
-                        //Debug.Log("무기 생성");
+                        Debug.Log("무기 생성");
                         //Debug.Log("DMG : " + weaponeObj[i].GetComponent<WeaponeData>().FMinDmg
                         //    + " ~ " + weaponeObj[i].GetComponent<WeaponeData>().MaxDmg);
 
@@ -79,11 +79,12 @@ namespace Characters
                 
             }
 
-
-            else
+            //else
+            if(m_Data == null || m_Data.WeaponeName=="")
             {
                 if (!isEquip)
                 {
+                    Debug.Log("기본무기 사용");
                     m_DefaultWeaponeObj.SetActive(true);
                 }
 

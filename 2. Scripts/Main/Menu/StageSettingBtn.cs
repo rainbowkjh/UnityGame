@@ -86,15 +86,19 @@ namespace MainScene
                     {
                         //무기 장착 슬롯으 0 인덱스
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
-                            InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 1);                        
+                            InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 1);
+
+                        Debug.Log("남 무기 장착 저장");
                     }
 
                     else if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() == null)
                     {
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                             null, 1);
+
+                        Debug.Log("남 무기 없음 저장");
                     }
-                    Debug.Log("데이터 저장");
+                    //Debug.Log("데이터 저장");
                 }
 
                 else
@@ -103,12 +107,16 @@ namespace MainScene
                     {
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                         InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 0);
+
+                        Debug.Log("여 무기 장착 저장");
                     }
                     
                     else if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() == null)
                     {
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                             null, 0);
+
+                        Debug.Log("여 무기 없음 저장");
                     }
                 }
 

@@ -32,8 +32,8 @@ namespace Characters
         [SerializeField, Header("공격 사정 거리")]
         float m_fAttackDis;
 
-
-
+        bool m_isMovePosStart = false;
+        
         protected override void Start()
         {
             base.Start();
@@ -49,26 +49,47 @@ namespace Characters
         {
             if(State != CharState.Dead)
             {
-                //자리 고정 캐릭터라도 공격 범위는 있기 때문에 거리를 계산 한다
-                float dis = Vector3.Distance(transform.position, m_trTarget.position);
-
-                if (!isLookup)
+                if(isMovePos)
                 {
-                    if (dis <= m_fTrackingDis)
+                    //Debug.Log("이동 경로");
+
+                    if (!m_isMovePosStart)
                     {
-                        EnemyMove();
+                        m_isMovePosStart = true;
+                        PosMove();
                     }
+                    
+                    PosNextMove();
+                    
                 }
 
-                else
+                if(!isMovePos)
                 {
-                    if (dis <= m_fAttackDis)
+                    //Debug.Log("플레이어 추적");
+
+                    //자리 고정 캐릭터라도 공격 범위는 있기 때문에 거리를 계산 한다
+                    float dis = Vector3.Distance(transform.position, m_trTarget.position);
+
+                    //고정 캐릭터가 아니면 이동
+                    if (!isLookup)
                     {
-                        EnemyStop();
-                        EnemyAttack();
-                        EnemyReload();
+                        if (dis <= m_fTrackingDis)
+                        {
+                            EnemyMove();
+                        }
                     }
+
+                   // else
+                   // {
+                        if (dis <= m_fAttackDis)
+                        {
+                            EnemyStop();
+                            EnemyAttack();
+                            EnemyReload();
+                        }
+                    //}
                 }
+                
 
                 LiveAni(true);
 
@@ -81,6 +102,8 @@ namespace Characters
             base.EnemyMove();
             m_Nav.isStopped = false;
             m_Nav.destination = m_trTarget.position;
+
+            
         }
 
         protected override void EnemyStop()
@@ -100,6 +123,42 @@ namespace Characters
 
             else if (!isLookFree)
                 transform.LookAt(new Vector3(m_trTarget.position.x, transform.position.y, transform.position.z));
+        }
+
+        void PosMove()
+        {
+
+            if (m_Nav.isPathStale)
+                return;
+
+            m_Nav.destination = movePos.MovePosTr[movePos.NextPos].position;
+
+            State = CharState.Run;
+            RunAni(true);
+            m_Nav.isStopped = false;
+            
+        }
+
+        void PosNextMove()
+        {
+            if(m_Nav.velocity.sqrMagnitude >= 0.2f *0.2f
+                && m_Nav.remainingDistance <=0.5f)
+            {
+                PosMoveStop();
+                movePos.NextPos = ++movePos.NextPos % movePos.MovePosTr.Length;
+                //Debug.Log("NextPos : " + movePos.NextPos);
+                PosMove();                
+            }
+        }
+
+        void PosMoveStop()
+        {
+            if(movePos.NextPos == 0)
+            {
+                //Debug.Log("NextPos : " + movePos.NextPos);
+                
+                isMovePos = false;
+            }
         }
 
     }

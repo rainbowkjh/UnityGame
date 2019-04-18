@@ -32,6 +32,10 @@ namespace Characters
         [SerializeField, Header("적이 쓰러질때 획득할 경험치")]
         float m_fMaxExp = 30.0f;
 
+        //이동경로가 있는지 확인 후 이동 패턴에 맞게 움직인다
+        protected EnemyMovePos movePos;
+        protected bool isMovePos = false;
+
         #region Weapone
 
         /// <summary>
@@ -76,6 +80,13 @@ namespace Characters
             FHP = m_fHPSetting;
 
             m_fFireRand = Random.Range(m_fFireDelay, 2.0f);
+
+            movePos = GetComponent<EnemyMovePos>();
+            if(movePos.MovePosGroup)
+            {
+                isMovePos = true;
+            }
+
         }
 
         #region

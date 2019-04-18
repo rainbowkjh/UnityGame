@@ -263,11 +263,14 @@ namespace Weapone
 
             if (obj != null)
             {
+                m_trFirePos.localRotation = Quaternion.Euler(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-15, 15), 0);
+
                 obj.transform.position = m_trFirePos.position;
                 obj.transform.rotation = m_trFirePos.rotation;
 
                 obj.GetComponent<BulletCtrl>().IsPlayerBullet = true;
                 obj.GetComponent<BulletCtrl>().FDmg = UnityEngine.Random.Range(FMinDmg, MaxDmg);
+                obj.GetComponent<BulletCtrl>().FSpeed = 20.0f;
 
                 obj.SetActive(true);
             }
