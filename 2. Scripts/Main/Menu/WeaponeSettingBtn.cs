@@ -1,4 +1,5 @@
 ﻿using _Item;
+using Manager;
 using Manager.GameData;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace MainScene
             bool m_isWeaponeAct = false;
             bool m_isUpgradeAct = false;
 
-        
+
 
             void Start()
             {
@@ -71,7 +72,13 @@ namespace MainScene
                 m_isWeaponeAct = !m_isWeaponeAct;
 
                 m_objClickUI.SetActive(m_isWeaponeAct);
-                m_objWeaponeBtn.SetActive(m_isWeaponeAct);
+
+                //플레이 씬이 아닐때 아이콘을 클릭하면 활성화 되는 기능 버튼
+                if(!GameManager.INSTANCE.gameSystem.isPlayScene)
+                {
+                    m_objWeaponeBtn.SetActive(m_isWeaponeAct);
+                }
+                
 
                 //무기 정보 출력
                 m_ItemInfoTxt.text = "Weapone " + m_WeaponeData.WeaponeName + "\n"

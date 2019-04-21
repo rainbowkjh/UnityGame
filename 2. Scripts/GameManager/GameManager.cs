@@ -6,6 +6,16 @@ using UnityEngine;
 
 namespace Manager
 {    
+    /// <summary>
+    /// 게임과 관련된 기능 묶음
+    /// </summary>
+    public struct GameSystem
+    {
+        public bool isPause; //이벤트 및 특정 상황에서 정지한다
+        public bool isPlayScene; //플레이씬인지 로비 씬인지 구별
+        
+    }
+
     public class GameManager : MonoBehaviour
     {
 
@@ -34,6 +44,8 @@ namespace Manager
 
         public DataManager gameData;
 
+        public GameSystem gameSystem;
+
         private void Awake()
         {
             GameManagerSingleTone();
@@ -53,6 +65,16 @@ namespace Manager
             DontDestroyOnLoad(gameObject);
         }
         #endregion
+
+        /// <summary>
+        /// 게임과 관련 된 기능 초기화
+        /// </summary>
+        void GameSetttingInit()
+        {
+            gameSystem.isPause = false;
+            gameSystem.isPlayScene = false;
+        }
+
 
     }
 

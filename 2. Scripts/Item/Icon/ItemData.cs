@@ -101,13 +101,17 @@ namespace _Item
                 //Debug.Log("아이템 파싱 데이터 적용");
                 ItemSetting();
             }
-                
 
-            UseIcon.SetActive(false);
+            if (WeaponeData.IsUse)
+                UseIcon.SetActive(true);
+            else if (!weaponeData.IsUse)
+                UseIcon.SetActive(false);
         }
 
-        void ItemSetting()
+        public void ItemSetting()
         {
+            m_Parsing = GameObject.Find("ParsingData").GetComponent<WeaponeParsing>();
+
             //Debug.Log("아이템 데이터 검색 : "+m_Parsing.weaponeList.Count);
             if (ItemType == ItemType.Weapone)
             {

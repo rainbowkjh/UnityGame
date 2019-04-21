@@ -60,6 +60,7 @@ namespace Characters
             if (GameManager.INSTANCE.isMale)
             {
                 NParsingIndex = 1;
+                Debug.Log("Male Load");
             }
             if (!GameManager.INSTANCE.isMale)
             {

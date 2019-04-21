@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Manager;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -47,7 +48,8 @@ namespace Characters
       
         void Update()
         {
-            if(State != CharState.Dead)
+            if(State != CharState.Dead
+                && !GameManager.INSTANCE.gameSystem.isPause)
             {
                 if(isMovePos)
                 {

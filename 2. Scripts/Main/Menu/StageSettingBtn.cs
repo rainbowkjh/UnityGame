@@ -33,6 +33,9 @@ namespace MainScene
             //[SerializeField,Header("장착슬롯의 정보를 가져와야 한다")]
             //WeaponeSettingBtn m_EquipWeapone;
 
+            [SerializeField, Header("게임이 시작되기전 인벤 내용을 로드해준다")]
+            GameObject m_InvenObj;
+
             private void Start()
             {
                 SpriteAct();
@@ -79,6 +82,8 @@ namespace MainScene
             /// </summary>
             public void StageStart()
             {
+              //  m_InvenObj.SetActive(true); //인벤 정보를 저장하기 위해 활성화를 한번 해준다//인벤 닫을 때 저장하면서 필요 없어짐
+
                 //게임이 시작 되기전에 플레이어 데이터를 저장한다
                 if (GameManager.INSTANCE.isMale)
                 {
@@ -88,7 +93,7 @@ namespace MainScene
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                             InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 1);
 
-                        Debug.Log("남 무기 장착 저장");
+                        //Debug.Log("남 무기 장착 저장");
                     }
 
                     else if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() == null)
@@ -96,7 +101,7 @@ namespace MainScene
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                             null, 1);
 
-                        Debug.Log("남 무기 없음 저장");
+                       // Debug.Log("남 무기 없음 저장");
                     }
                     //Debug.Log("데이터 저장");
                 }
@@ -108,7 +113,7 @@ namespace MainScene
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                         InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>().WeaponeData, 0);
 
-                        Debug.Log("여 무기 장착 저장");
+                      //  Debug.Log("여 무기 장착 저장");
                     }
                     
                     else if(InventoryList.INVENTORY.TrEquipTr[0].GetComponentInChildren<ItemData>() == null)
@@ -116,11 +121,13 @@ namespace MainScene
                         GameManager.INSTANCE.gameData.Save(playerData, InventoryList.INVENTORY.GetWeaponeItem(),
                             null, 0);
 
-                        Debug.Log("여 무기 없음 저장");
+                      //  Debug.Log("여 무기 없음 저장");
                     }
                 }
 
+
                 gameObject.SetActive(false);
+                GameManager.INSTANCE.gameSystem.isPlayScene = true;
                 SceneManager.LoadScene("Stage" + m_nStageIndex);
             }
         }

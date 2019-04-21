@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Manager;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +17,8 @@ namespace Weapone
         void Update()
         {
             if(player.State != Characters.CharState.Dead
-                && !player.IsRoll)
+                && !player.IsRoll
+                && !GameManager.INSTANCE.gameSystem.isPause)
             {
                 Fire();
                 Reload();

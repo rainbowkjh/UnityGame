@@ -1,4 +1,5 @@
 ﻿using Characters;
+using Manager;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,7 +24,8 @@ namespace CtrlManager
         void Update()
         {
             //플레이어가 생존해 있을때만 제어
-            if(player.State != CharState.Dead)
+            if(player.State != CharState.Dead
+                && !GameManager.INSTANCE.gameSystem.isPause)
             {               
                 Move();
                 //Crouch();

@@ -123,9 +123,9 @@ public class BulletDmg : MonoBehaviour
 
     IEnumerator DisableEnemy()
     {
-        yield return new WaitForSeconds(1.5f);
         //해당 캐릭터의 콜라이더를 끈다
         this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        yield return new WaitForSeconds(1.5f);
         gameObject.SetActive(false);
     }
 

@@ -29,6 +29,7 @@ namespace Characters
 
         private void Start()
         {
+            //Debug.Log("WeaponeManager");
             player = GetComponent<PlayerCtrl>();
             WeaponeSetting();
         }
@@ -38,12 +39,15 @@ namespace Characters
             CharactersGameData load = GameManager.INSTANCE.gameData.Load(player.NParsingIndex);
             bool isEquip = false;
 
+            //Debug.Log("로드 캐릭터 데이터 : " + load.SName);
+            //Debug.Log("로드 슬롯 : " + player.NParsingIndex);
+
             //로드한 무기의 정보와 무기 오브잭트 배열을 검사하여 찾는다
             m_Data = load.EquipWeapone;
 
             if(m_Data != null)
             {
-                //Debug.Log("로드 데이터 : " + m_Data.WeaponeName);
+                Debug.Log("로드 데이터 : " + m_Data.WeaponeName);
                 //Debug.Log("셍성 시킬 오브젝트 길이 : " + weaponeObj.Length);
                 //Debug.Log("셍성 시킬 오브젝트 0번째 무기이름 : " + weaponeObj[0].GetComponent<GunCtrl>().WeaponeNameSearch);
 
@@ -68,7 +72,7 @@ namespace Characters
                         obj.GetComponent<WeaponeData>().NMag = m_Data.NMag;
                         obj.GetComponent<GunCtrl>().isEquip = true; //
 
-                        Debug.Log("무기 생성");
+                        //Debug.Log("무기 생성");
                         //Debug.Log("DMG : " + weaponeObj[i].GetComponent<WeaponeData>().FMinDmg
                         //    + " ~ " + weaponeObj[i].GetComponent<WeaponeData>().MaxDmg);
 
