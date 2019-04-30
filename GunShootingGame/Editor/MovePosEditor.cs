@@ -24,14 +24,26 @@ public class MovePosEditor : Editor
         movePos = (MovePos)target;
     }
 
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        EditorGUILayout.HelpBox("isEvent : 정지 시킨다, isPlayer : 플레이어와 적 캐릭터를 분리해서 감지 시킨다", MessageType.Info);
+    }
+
+
     /// <summary>
     /// 작업 화면에 선을 이어주기 때문에
     /// OnSceneGUI에서 코딩한다 
     /// </summary>
     private void OnSceneGUI()
     {
-        //타겟 지점에 색을 지정한다
-        Handles.color = Color.red;
+        //타겟 지점에 색을 지정한다(플레이어와 적 캐릭터의 이동 경로 색을 다르게 한다)
+        if (movePos.isPlayer)
+            Handles.color = Color.blue;
+        else if (!movePos.isPlayer)
+            Handles.color = Color.red;
+
         Handles.CubeCap(0, movePos.transform.position, Quaternion.identity, 0.5f);
 
         if (movePos.NextPos!=null)

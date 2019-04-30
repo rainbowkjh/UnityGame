@@ -17,6 +17,19 @@ public class GunData : MonoBehaviour
     [SerializeField]
     int maxAmmo;
 
+    AudioSource _audio;
+    [SerializeField,Header("0 사격, 1 재장전")]
+    AudioClip[] _sfx;
+
+    [SerializeField, Header("Muzzle")]
+    ParticleSystem muzzleEffect;
+
+    private void Start()
+    {
+        _audio = GetComponent<AudioSource>();
+       
+    }
+
     public GunData(float minDmg, float maxDmg, int mag, int maxMag,
         int curAmmo, int maxAmmo)
     {
@@ -105,4 +118,20 @@ public class GunData : MonoBehaviour
             maxAmmo = value;
         }
     }
+
+    public void FireSfx()
+    {
+        _audio.PlayOneShot(_sfx[0]);
+    }
+
+    public void ReloadSfx()
+    {
+        _audio.PlayOneShot(_sfx[1]);
+    }
+
+    public void MuzzleEffect()
+    {
+        muzzleEffect.Play();
+    }
+
 }

@@ -25,15 +25,20 @@ public class PlayerCtrlEditor : Editor
 
         DrawDefaultInspector();
 
-        using (new ButtonColorEditor(Color.gray))
+        if(playerCtrl.CharactersData != null)
         {
-            if (GUILayout.Button("현재 캐릭터 정보"))
+            using (new ButtonColorEditor(Color.gray))
             {
-                isStateOn = !isStateOn;
+                if (GUILayout.Button("현재 캐릭터 정보"))
+                {
+                    isStateOn = !isStateOn;
+                }
             }
+
+            CharState();
         }
 
-        CharState();
+
 
     }
 

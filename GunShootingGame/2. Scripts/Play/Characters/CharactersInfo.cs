@@ -11,12 +11,13 @@ namespace Characters
     [Serializable]
     public enum CharState
     {
-        Idle, Move, Live,
+        Idle, Move, 
     }
 
     [Serializable]
     public class CharactersData
-    {   
+    {
+        bool isLive;
         float fHP;
         float fMaxHP;
         float fSpeed;
@@ -74,6 +75,19 @@ namespace Characters
                 eState = value;
             }
         }
+
+        public bool IsLive
+        {
+            get
+            {
+                return isLive;
+            }
+
+            set
+            {
+                isLive = value;
+            }
+        }
         #endregion
 
         public CharactersData()
@@ -85,6 +99,7 @@ namespace Characters
 
        public CharactersData(float hp, float maxhp, float speed)
         {
+            isLive = true;
             fHP = hp;
             fMaxHP = maxhp;
             fSpeed = speed;

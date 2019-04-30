@@ -10,8 +10,11 @@ namespace Characters
 
         readonly int hashWeaponeState = Animator.StringToHash("WeaponeState");
         readonly int hashMove = Animator.StringToHash("Move");
-        readonly int hashFire = Animator.StringToHash("Fire");
+        readonly int hashFire = Animator.StringToHash("Attack");
         readonly int hashReload = Animator.StringToHash("Reload");
+        readonly int hashDown = Animator.StringToHash("Down");
+        readonly int hashHit = Animator.StringToHash("Hit");
+
 
         protected void WeaponeSwapAni(int index)
         {
@@ -33,6 +36,15 @@ namespace Characters
             Ani.SetTrigger(hashReload);
         }
 
+        public void DownAni()
+        {
+            Ani.SetTrigger(hashDown);
+        }
+
+        public void HitAni()
+        {
+            Ani.SetTrigger(hashHit);
+        }
 
     }
 
