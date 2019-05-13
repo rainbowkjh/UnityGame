@@ -16,14 +16,15 @@ namespace Black
             [SerializeField]
             private float hp;
             [SerializeField]
-            private float maxHp;
-            [SerializeField]
-            private float speed;
+            private float maxHp;            
+            private float speed = 5; //이동하면서 상황에 맞게 속도를 변경 시킬 예정
             private bool isLive = true;
             private bool isFire = false;
             private bool isReload = false;
+            private bool isStop = true;
+            private Transform nextMove; //다음 이동 위치를 받을 변수 
 
-            AniCtrl aniCtrl;
+       //     AniCtrl aniCtrl;
 
             #region Set,Get
             public float Hp
@@ -104,25 +105,50 @@ namespace Black
                 }
             }
 
-            public AniCtrl AniCtrl
+            //public AniCtrl AniCtrl
+            //{
+            //    get
+            //    {
+            //        return aniCtrl;
+            //    }
+
+            //    set
+            //    {
+            //        aniCtrl = value;
+            //    }
+            //}
+
+            public bool IsStop
             {
                 get
                 {
-                    return aniCtrl;
+                    return isStop;
                 }
 
                 set
                 {
-                    aniCtrl = value;
+                    isStop = value;
+                }
+            }
+
+            public Transform NextMove
+            {
+                get
+                {
+                    return nextMove;
+                }
+
+                set
+                {
+                    nextMove = value;
                 }
             }
             #endregion
 
-            protected void CharInit(float hp, float maxHp, float speed)
+            protected void CharInit(float hp, float maxHp)
             {
                 this.hp = hp;
-                this.maxHp = maxHp;
-                this.speed = speed;
+                this.maxHp = maxHp;                
             }
 
         }

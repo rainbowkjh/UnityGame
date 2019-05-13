@@ -1,4 +1,5 @@
 ﻿using Black.Characters;
+using Black.Manager;
 using Black.Weapone;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,27 +35,38 @@ namespace Black
 
             void Start()
             {
+              //  Debug.Log("MobileCtrl");
                 playerCtrl = GetComponent<PlayerCtrl>();
                 weaponeManager = GetComponent<WeaponeManager>();
-
-                //시작 시 현재 사용 중인 무기의 정보를 출력한다
-                playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
-                      weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
-                             
+               
             }
 
             
             void Update()
             {
-                if(playerCtrl.IsLive)
+
+                if(!GameManager.INSTANCE.system.isPause)
                 {
-                    ViewJoystick();
+                    //시작 시 현재 사용 중인 무기의 정보를 출력한다
+                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
+                          weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
 
-                    if (isFireBtn)
-                        FireBtn();
+                    if (playerCtrl.IsLive)
+                    {
+                        ViewJoystick();
 
-                    playerCtrl.EnemyInfoPrint();
+                        if(!playerCtrl.IsStop)
+                        {
+                            playerCtrl.PlayerNextMove();
+                        }
+
+                        if (isFireBtn)
+                            FireBtn();
+
+                        playerCtrl.EnemyInfoPrint();
+                    }
                 }
+                
             }
 
             void ViewJoystick()
@@ -62,10 +74,10 @@ namespace Black
                 vir -= variableJoystick.Vertical;
                 hor += variableJoystick.Horizontal;
 
-                vir = Angle(vir, -45, 45);
-                transform.rotation = Quaternion.Euler(0, hor, 0);
+                //vir = Angle(vir, -45, 45);
+                //hor = Angle(hor, -30, 30);
 
-                hor = Angle(hor, -30, 30);
+                transform.rotation = Quaternion.Euler(0, hor, 0);
                 Camera.main.transform.rotation = Quaternion.Euler(vir, hor, 0);
             }
 

@@ -19,6 +19,7 @@ namespace Black
             [SerializeField, Header("발사 시작 지점")]
             Transform firePosTr;
 
+            AniCtrl aniCtrl;
             #region Set,Get
 
 
@@ -60,15 +61,30 @@ namespace Black
                     firePosTr = value;
                 }
             }
+
+            public AniCtrl AniCtrl
+            {
+                get
+                {
+                    return aniCtrl;
+                }
+
+                set
+                {
+                    aniCtrl = value;
+                }
+            }
             #endregion
 
             private void Awake()
             {
+                //   Debug.Log("PlayerCtrl");
                 AniCtrl = GetComponent<AniCtrl>();
                 PlayerUI = GetComponent<PlayerUI>();
 
                 PlayerUI.CurHP(Hp, MaxHp);
             }
+
 
 
             /// <summary>
@@ -96,6 +112,18 @@ namespace Black
                         PlayerUI.EnmryHpInfoDisable();
                     }
                 }
+            }
+
+            /// <summary>
+            /// 다음 위치로 이동 시킨다
+            /// </summary>
+            public void PlayerNextMove()
+            {
+                if(NextMove != null)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position,
+                                                NextMove.position, Speed * Time.deltaTime);
+                }                
             }
 
 

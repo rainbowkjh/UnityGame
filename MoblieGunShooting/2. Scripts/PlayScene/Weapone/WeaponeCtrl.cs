@@ -1,6 +1,7 @@
 ﻿using Black.Characters;
 using Black.DmgManager;
 using Black.ItemData;
+using Black.Manager;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -228,18 +229,25 @@ namespace Black
             [SerializeField, Header("Muzzle")]
             ParticleSystem muzzleEffect;
 
+            [SerializeField, Header("HitEffectObj")]
+            GameObject hitEffect;
+
+            ParticleSystem[] hitParticle;
+
             private void Awake()
             {
                 parsingData = GameObject.Find("ParSingData").GetComponent<ParsingData>();
-
+                
             }
 
             private void Start()
             {
+             //   Debug.Log("WeaponeCtrl");
                 ItemSearch(weaponeDataName); //무기 데이터 적용 
-
                 playerCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
                 _audio = GetComponent<AudioSource>();
+
+                hitParticle = hitEffect.GetComponentsInChildren<ParticleSystem>();
             }
 
             void ItemSearch(string name)
@@ -317,6 +325,8 @@ namespace Black
                             //Debug.Log("SFX 실행 상태 : " + _audio.isPlaying);
                             //Debug.Log("Particle 실행 상태 1: " + muzzleEffect.isPlaying);
 
+                            //소리 크기 값을 가져온다
+                            _audio.volume = GameManager.INSTANCE.volume.sfx;
                             _audio.PlayOneShot(_sfx[0]);
                             muzzleEffect.Play();
                             
@@ -334,6 +344,8 @@ namespace Black
                             if (Time.time >= fireTime)
                             {
                                 fireTime = Time.time + fireRate + Random.Range(0.1f, 0.3f);
+
+                                _audio.volume = GameManager.INSTANCE.volume.sfx;
                                 _audio.PlayOneShot(_sfx[2]);
                             }
                         }
@@ -366,6 +378,7 @@ namespace Black
                 playerCtrl.IsReload = true;
                 playerCtrl.AniCtrl.ReloadAni();
 
+                _audio.volume = GameManager.INSTANCE.volume.sfx;
                 _audio.PlayOneShot(_sfx[1]);
 
                 if (weaponeState != 2)
@@ -398,6 +411,8 @@ namespace Black
                 {
                     Debug.DrawLine(playerCtrl.FirePosTr.position, hit.point, Color.red);
 
+                    HitEffectPlay(hit.point);
+
                     float dmg = Random.Range(FMinDmg, MaxDmg);
 
                     playerCtrl.PlayerUI.DmgInfoprint(dmg);
@@ -409,6 +424,16 @@ namespace Black
                         playerCtrl.PlayerUI.EnemyHpInfo(hit.transform.GetComponent<CharactersData>().Hp,
                             hit.transform.GetComponent<CharactersData>().MaxHp);
                     }
+                }
+            }
+
+            void HitEffectPlay(Vector3 hitPos)
+            {
+                hitEffect.transform.position = hitPos;
+
+                for(int i=0;i< hitParticle.Length;i++)
+                {
+                    hitParticle[i].Play();
                 }
             }
 

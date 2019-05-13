@@ -1,4 +1,5 @@
 ﻿using Black.Characters;
+using Black.Manager;
 using Black.Weapone;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,24 +35,35 @@ namespace Black
                 playerCtrl = GetComponent<PlayerCtrl>();
                 weaponeManager = GetComponent<WeaponeManager>();
 
-                //시작 시 현재 사용 중인 무기의 정보를 출력한다
-                playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
-                      weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
-
             }
          
             void Update()
             {
-                if(playerCtrl.IsLive)
+                if (!GameManager.INSTANCE.system.isPause)
                 {
-                    MouseView();
-                    WeaponeSwap();
+                    //시작 시 현재 사용 중인 무기의 정보를 출력한다
+                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
+                      weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
 
-                    GunFire();
-                    GunReload();
+                    if (playerCtrl.IsLive)
+                    {
+                        MouseView();
+                        WeaponeSwap();
 
-                    playerCtrl.EnemyInfoPrint();
+                        if(!playerCtrl.IsStop)
+                        {
+                            playerCtrl.PlayerNextMove();
+                        }
+
+
+                        GunFire();
+                        GunReload();
+
+                        playerCtrl.EnemyInfoPrint();
+                    }
                 }
+
+                    
             }
 
             /// <summary>
@@ -64,12 +76,12 @@ namespace Black
                 mouseX -= Input.GetAxis("Mouse Y");
                 mouseY += Input.GetAxis("Mouse X");
 
-                //캐릭터를 좌/우로 회전
-                mouseY = Angle(mouseY, -45, 45);
-                transform.rotation = Quaternion.Euler(0, mouseY, 0);
+                ////캐릭터를 좌/우로 회전
+                //mouseY = Angle(mouseY, -45, 45);
+                ////카메라를 좌/우, 상/하로 회전
+                //mouseX = Angle(mouseX, -30, 30);
 
-               //카메라를 좌/우, 상/하로 회전
-                mouseX = Angle(mouseX, -30, 30);
+                transform.rotation = Quaternion.Euler(0, mouseY, 0);
                 Camera.main.transform.rotation = Quaternion.Euler(mouseX, mouseY, 0);
             }
 
