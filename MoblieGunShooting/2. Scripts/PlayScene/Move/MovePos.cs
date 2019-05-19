@@ -1,4 +1,5 @@
 ﻿
+using Black.Car;
 using Black.Characters;
 using Black.Manager;
 using System.Collections;
@@ -46,14 +47,15 @@ namespace Black
 
             EnemyCreate[] enemyCreate;
 
+            [SerializeField, Header("차량 탑승 및 AI등")]
+            private string tagName;
 
             private void Start()
             {
                 //생성 시킬 적이 있으면
                 if (enemyArea != null)
                 {
-                    enemyCreate = enemyArea.GetComponentsInChildren<EnemyCreate>();
-                    GameManager.INSTANCE.NEnemyCount = enemyCreate.Length; //생성된 적의 수를 담는다
+                    enemyCreate = enemyArea.GetComponentsInChildren<EnemyCreate>();                    
                 }
                     
             }
@@ -122,6 +124,21 @@ namespace Black
 
                 }
 
+
+                if(other.tag.Equals(tagName))
+                {
+                    if(isEvent)
+                    {
+                        CarStop(other);
+                    }
+
+                    if(!isEvent)
+                    {
+                        //Debug.Log("Tag : " + tagName);
+                        CarMove(other);
+                    }
+                }
+
             }
 
 
@@ -136,7 +153,7 @@ namespace Black
             {
                 if (!isEnter)
                 {
-
+                    GameManager.INSTANCE.NEnemyCount = enemyCreate.Length; //생성된 적의 수를 담는다
                     isEnter = true;
 
                     yield return new WaitForSeconds(1.0f);
@@ -174,7 +191,6 @@ namespace Black
                 coll.GetComponent<CharactersData>().Speed = moveSpeed;
                 //다음 위치를 보낸다
                 coll.GetComponent<CharactersData>().NextMove = nextPos;
-
             }
 
 
@@ -196,6 +212,33 @@ namespace Black
                 return false;
             }
 
+            /// <summary>
+            /// 탑승 차량 이동
+            /// </summary>
+            /// <param name="coll"></param>
+            void CarMove(Collider coll)
+            {
+                TrooperCar car = coll.GetComponent<TrooperCar>();
+
+                car.transform.rotation = Quaternion.Slerp(car.transform.rotation,
+                    this.transform.rotation, 25 * Time.deltaTime);
+
+                car.CarState = TrooperState.Excel;
+                car.CarSpeed = moveSpeed;
+                car.NextPos = nextPos;
+
+            }
+
+            /// <summary>
+            /// 탑승차량 정지
+            /// </summary>
+            /// <param name="coll"></param>
+            void CarStop(Collider coll)
+            {
+                TrooperCar car = coll.GetComponent<TrooperCar>();
+
+                car.CarState = TrooperState.Break;
+            }
 
         }
 

@@ -32,12 +32,26 @@ namespace Black
             [SerializeField, Header("Enemy HP Text")]
             Text enemyHpText;
 
+            [SerializeField, Header("피격 시 UI")]
+            CanvasGroup cg;
+
+            [SerializeField, Header("피격 시 데미지 수치")]
+            Text painText;
+
+            
             private void Start()
             {
                 enemyInfoObj.SetActive(false);
+
+                //피격 당할 때 이미지 안보이게 설정
+                cg.alpha = 0f;
             }
 
-
+            /// <summary>
+            /// 현재 HP정보
+            /// </summary>
+            /// <param name="curHp"></param>
+            /// <param name="maxHp"></param>
             public void CurHP(float curHp, float maxHp)
             {
                 hpUI.fillAmount = curHp / maxHp;
@@ -128,7 +142,6 @@ namespace Black
                 enemyInfoObj.SetActive(true);
             }
                  
-
             /// <summary>
             /// 에임이 적을 벗어나면 정보를 숨긴다
             /// </summary>
@@ -137,6 +150,46 @@ namespace Black
                 enemyInfoObj.SetActive(false);
             }
 
+            /// <summary>
+            /// 피격 시 혈흔 이미지 생성
+            /// 천천히 투명해진다
+            /// 
+            /// HitDmg에서 데미지 값을 받으면서 호출
+            /// </summary>
+            public void PainSprite(float dmg)
+            {
+                cg.alpha = 1.0f;
+
+                /*
+                 if(cg.alpha>0)
+                {
+                    cg.alpha -= Time.deltaTime * 0.1f;
+                }
+                 */
+                 
+                StartCoroutine(PainText(dmg));
+
+            }
+
+            /// <summary>
+            /// 피격 데미지 수치를 보여준다
+            /// 폰트 사이즈 70 -> 50
+            /// 초기 사이즈 50
+            /// </summary>
+            IEnumerator PainText(float dmg)
+            {
+                painText.text = "DMAGE! " + dmg.ToString("N0");
+
+                painText.fontSize = 70;
+                
+                yield return new WaitForSeconds(0.5f);
+                painText.fontSize = 50;
+
+                yield return new WaitForSeconds(0.5f);
+                cg.alpha = 0.0f;
+            }
+
+   
         }
 
     }

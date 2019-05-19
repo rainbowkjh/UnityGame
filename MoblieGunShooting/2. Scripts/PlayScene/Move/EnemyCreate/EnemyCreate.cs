@@ -1,7 +1,9 @@
-﻿using Black.Manager;
+﻿using Black.Characters;
+using Black.Manager;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// 적을 생성 시킬 트랜스폼에 적용 시키는 스크립트
@@ -14,10 +16,31 @@ namespace Black
 {
     namespace MovePosObj
     {
+        [Serializable]
+        public enum EnemyType
+        {
+            zombie, SdZombie,
+        }
+
         public class EnemyCreate : MonoBehaviour
         {
+            [SerializeField,Header("생성 시킬 적의 타입")]
+            EnemyType enemyType;
+
             [SerializeField,Header("Pooling Manager")]
             MemoryPooling pool;
+
+            [SerializeField, Header("생성 시킬 적의 외형")]
+            bool isZombie = true;
+            [SerializeField, Header("좀비 외형")]
+            ZombieSkin zombieSkin;
+            [SerializeField, Header("적 외형")]
+            EnemySkin enemySkin;
+
+            GameObject obj;
+
+            [SerializeField, Header("생성할 적의 HP")]
+            float hp = 100;
 
             /// <summary>
             /// 적 생성
@@ -26,20 +49,40 @@ namespace Black
             /// </summary>
             public void EnemyAct()
             {
-                GameObject obj = pool.GetObjPool(pool.nZombieMax, pool.ZombieList);
+                //활성화 시킬 적의 타입을 확인
+                switch (enemyType)
+                {
+                    case EnemyType.zombie:
+                        obj = pool.GetObjPool(pool.nZombieMax, pool.ZombieList);
+                        break;
 
+                    case EnemyType.SdZombie:
+                        obj = pool.GetObjPool(pool.nSdZombieMax, pool.sdZombieList);
+                        break;
+
+                }
+
+                //활성화 가능하면 활성화 시킴
                 if (obj != null)
                 {
+                    if (isZombie)
+                    {
+                        obj.GetComponent<ZombieSkinSetting>().EnemyTypeSetting(zombieSkin);
+                    }
+                    else if (!isZombie)
+                    {
+                        obj.GetComponent<EnemySkinSetting>().EnemyTypeSetting(enemySkin);
+                    }
+
+                    //적 캐릭터 활성화 데이터 초기화
+                    obj.GetComponent<EnemyCtrl>().EnemyInit(true, hp, false);
+
                     obj.transform.position = transform.position;
                     obj.transform.rotation = transform.rotation;
                     obj.SetActive(true);
-                    
                 }
             }
 
-
         }
-
     }
 }
-

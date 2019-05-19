@@ -1,4 +1,5 @@
-﻿using Black.Characters;
+﻿using Black.CameraUtil;
+using Black.Characters;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,9 @@ namespace Black
 
             protected CharactersData charData;
 
+            [SerializeField, Header("플레이어의 경우 피격 당하면 카메라 흔들림")]
+            shakeCamera shakeCam;
+            
             private void Start()
             {
                 charData = GetComponent<CharactersData>();
@@ -30,18 +34,32 @@ namespace Black
             /// <param name="dmg"></param>
             virtual public void HitDamage(float dmg)
             {
-                charData.Hp -= dmg;
+                if (charData.Hp > 0)
+                {
+                    charData.Hp -= dmg;
 
-                if(charData.Hp <= 0 &&
+                    //HitDmg 스크립트 적용 된 대상이 플레이어
+                    if (this.transform.tag.Equals("Player"))
+                    {
+                        //Debug.Log("Hit");  
+
+                        //플레이어 피격 UI
+                        PlayerCtrl player = GetComponent<PlayerCtrl>();
+                        player.PlayerUI.PainSprite(dmg);
+
+                        StartCoroutine(shakeCam.ShakeCamera(0.3f, 0.3f, 0.3f));
+                    }
+                }
+                    
+                
+                if (charData.Hp <= 0 &&
                     charData.IsLive)
                 {
+                    charData.Hp = 0;
                     charData.IsLive = false;
 
-                    charData.Hp = 0;
-                    //캐릭터 쓰러지는 애니메이션 추가
-
                     //생성되는 적이 아니라 엑스트라 적
-                    if(this.transform.tag.Equals("Enemy"))
+                    if (this.transform.tag.Equals("Enemy"))
                     {
                         StartCoroutine(EnemyDisable());
                     }
@@ -63,8 +81,9 @@ namespace Black
 
 
             protected IEnumerator EnemyDisable()
-            {
+            {                
                 yield return new WaitForSeconds(1.5f);
+                //Debug.Log("오브젝트 비활성화");
                 gameObject.SetActive(false);
             }
 

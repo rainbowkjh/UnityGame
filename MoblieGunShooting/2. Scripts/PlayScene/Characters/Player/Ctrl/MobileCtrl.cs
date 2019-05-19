@@ -33,12 +33,28 @@ namespace Black
             /// </summary>
             bool isFireBtn = false;
 
+            [SerializeField, Header("탑승 상태에서 무기 교체 버튼을 비활성화")]
+            GameObject attackBtn;
+
             void Start()
             {
               //  Debug.Log("MobileCtrl");
                 playerCtrl = GetComponent<PlayerCtrl>();
                 weaponeManager = GetComponent<WeaponeManager>();
                
+                if(playerCtrl.IsDrive)
+                {
+                    weaponeManager.WeaponeChange(3);
+                    weaponeID = 3;
+                    attackBtn.SetActive(false);
+                }
+                if(!playerCtrl.IsDrive)
+                {
+                    weaponeID = 0;
+                    weaponeManager.WeaponeChange(0);
+                    attackBtn.SetActive(true);
+                }
+
             }
 
             
@@ -65,6 +81,30 @@ namespace Black
 
                         playerCtrl.EnemyInfoPrint();
                     }
+
+                    if(!playerCtrl.IsLive && playerCtrl.Hp==0 && !playerCtrl.IsDead)
+                    {
+                        playerCtrl.IsDead = true;
+                        //카메라 연출
+                        playerCtrl.DeadCamera.DeadCamAni();
+
+                        //playerCtrl.AniCtrl.LiveAni(playerCtrl.IsLive);
+                        playerCtrl.AniCtrl.DeadAni();
+                                               
+                    }
+
+                    //캐릭터가 쓰러지고 이벤트 캐릭터일때
+                    if(!playerCtrl.IsLive && playerCtrl.IsEventPlayer)
+                    {
+                        //FadeOut
+                        playerCtrl.FadeOutCg.FadeOutPlay();
+                    }
+
+                    else if(!playerCtrl.IsLive)
+                    {
+                        playerCtrl.FadeOutCg.GameOverFade();
+                    }
+
                 }
                 
             }
@@ -74,11 +114,18 @@ namespace Black
                 vir -= variableJoystick.Vertical;
                 hor += variableJoystick.Horizontal;
 
-                //vir = Angle(vir, -45, 45);
-                //hor = Angle(hor, -30, 30);
+                ////탑승 상태 시야 제한
+                //if (playerCtrl.IsDrive)
+                //    hor = Angle(hor, -30, 30);
 
+                vir = Angle(vir, -30, 45);
+                
                 transform.rotation = Quaternion.Euler(0, hor, 0);
-                Camera.main.transform.rotation = Quaternion.Euler(vir, hor, 0);
+                // Camera.main.transform.rotation = Quaternion.Euler(vir, hor, 0);
+                //Camera.main.transform.localRotation = Quaternion.Euler(vir, hor, 0); //로컬이 회전속도가 빠르다
+                //playerCtrl.CameraRigTr.localRotation = Quaternion.Euler(vir, hor, 0); //카메라의 상위 오브젝트를 회전, 카메라는 사격 시 흔들림 효과를 준다
+                playerCtrl.CameraRigTr.rotation = Quaternion.Euler(vir, hor, 0); //로컬로 돌리면..캐릭터 회전과 캐릭터 최상위 회전 값이 어긋나버린다..(마커 회전에 영향)
+
             }
 
             float Angle(float angle, float min, float max)

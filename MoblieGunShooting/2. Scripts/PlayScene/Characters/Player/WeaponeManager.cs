@@ -31,10 +31,10 @@ namespace Black
 
 
             #endregion
-            private void Start()
-            {
-                WeaponeChange(0);
-            }
+            //private void Start()
+            //{
+            //    WeaponeChange(0);
+            //}
 
             /// <summary>
             /// 무기 활성화

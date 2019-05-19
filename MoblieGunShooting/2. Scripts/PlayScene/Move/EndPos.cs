@@ -1,4 +1,5 @@
-﻿using Black.Characters;
+﻿using Black.Car;
+using Black.Characters;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,10 @@ namespace Black
             /// </summary>
             bool isEnter = false;
 
+            [SerializeField, Header("차량 탑승 및 AI등")]
+            private string tagName;
+
+
             private void OnTriggerEnter(Collider other)
             {
                 if (other.transform.tag.Equals("Player"))
@@ -28,6 +33,11 @@ namespace Black
                     StartCoroutine(CharStop(other));
 
                 }
+                if (other.transform.tag.Equals(tagName))
+                {
+                    CarStop(other);
+                }
+
             }
 
 
@@ -53,6 +63,15 @@ namespace Black
                 }
             }
 
+            void CarStop(Collider coll)
+            {
+                TrooperCar car = coll.GetComponent<TrooperCar>();
+
+                car.transform.rotation = Quaternion.Slerp(car.transform.rotation,
+                                            this.transform.rotation, 25 * Time.deltaTime);
+                //car.CarState = TrooperState.Break;
+                StartCoroutine(car.CarBrake());
+            }
 
         }
 

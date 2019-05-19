@@ -1,8 +1,14 @@
-﻿using Black.UI;
+﻿using Black.CameraUtil;
+using Black.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 플레이어 캐릭터의 기본 데이터 및 필요 클래스를 연결한다
+/// 모바일 또는 마우스 조작에서 제어
+/// 
+/// </summary>
 namespace Black
 {
     namespace Characters
@@ -20,6 +26,33 @@ namespace Black
             Transform firePosTr;
 
             AniCtrl aniCtrl;
+
+            [SerializeField, Header("헬기 또는 자동차 탑승 상태")]
+            bool isDrive = false;
+
+            /// <summary>
+            /// 쉐이크 카메라를 사용하면서
+            /// 카메라릭을 회전 시킨다
+            /// </summary>
+            [SerializeField, Header("카메라")]
+            Transform cameraRigTr;
+
+            /// <summary>
+            /// 캐릭터 쓰러질떄 카메라 연출
+            /// </summary>
+            [SerializeField, Header("캐릭터 쓰러질때 활성화 카메라")]
+            DeadCam deadCamera;
+
+            FadeOut fadeOutCg;
+
+            [SerializeField, Header("플레이어를 이벤트 연출로 사용할지 결정, 페이드 아웃 시 메인 버튼 관계")]
+            bool isEventPlayer = false;
+
+            bool isDead = false;
+
+            [SerializeField]
+            MarkerCam markerCamTr;
+
             #region Set,Get
 
 
@@ -74,6 +107,98 @@ namespace Black
                     aniCtrl = value;
                 }
             }
+
+            public bool IsDrive
+            {
+                get
+                {
+                    return isDrive;
+                }
+
+                set
+                {
+                    isDrive = value;
+                }
+            }
+
+            public Transform CameraRigTr
+            {
+                get
+                {
+                    return cameraRigTr;
+                }
+
+                set
+                {
+                    cameraRigTr = value;
+                }
+            }
+
+            public bool IsDead
+            {
+                get
+                {
+                    return isDead;
+                }
+
+                set
+                {
+                    isDead = value;
+                }
+            }
+
+            public DeadCam DeadCamera
+            {
+                get
+                {
+                    return deadCamera;
+                }
+
+                set
+                {
+                    deadCamera = value;
+                }
+            }
+
+            public FadeOut FadeOutCg
+            {
+                get
+                {
+                    return fadeOutCg;
+                }
+
+                set
+                {
+                    fadeOutCg = value;
+                }
+            }
+
+            public bool IsEventPlayer
+            {
+                get
+                {
+                    return isEventPlayer;
+                }
+
+                set
+                {
+                    isEventPlayer = value;
+                }
+            }
+
+            public MarkerCam MarkerCamTr
+            {
+                get
+                {
+                    return markerCamTr;
+                }
+
+                set
+                {
+                    markerCamTr = value;
+                }
+            }
+
             #endregion
 
             private void Awake()
@@ -83,9 +208,9 @@ namespace Black
                 PlayerUI = GetComponent<PlayerUI>();
 
                 PlayerUI.CurHP(Hp, MaxHp);
+
+                FadeOutCg = GetComponent<FadeOut>();
             }
-
-
 
             /// <summary>
             /// 에임이 적을 바라보면 정보를 보여준다 
@@ -123,7 +248,7 @@ namespace Black
                 {
                     transform.position = Vector3.MoveTowards(transform.position,
                                                 NextMove.position, Speed * Time.deltaTime);
-                }                
+                }
             }
 
 

@@ -1,4 +1,5 @@
-﻿using Black.Characters;
+﻿using Black.CameraUtil;
+using Black.Characters;
 using Black.DmgManager;
 using Black.ItemData;
 using Black.Manager;
@@ -234,6 +235,9 @@ namespace Black
 
             ParticleSystem[] hitParticle;
 
+            [SerializeField, Header("Shake Cam")]
+            shakeCamera shakeCam;
+
             private void Awake()
             {
                 parsingData = GameObject.Find("ParSingData").GetComponent<ParsingData>();
@@ -300,13 +304,18 @@ namespace Black
                 {
                     fireRate = 0.5f;
                 }
+                if(state == 3)
+                {
+                    fireRate = 0.01f;
+                }
+
             }
 
             /// <summary>
             /// 공격
             /// </summary>
             public void Fire()
-            {
+            {   
                 if (playerCtrl.IsLive &&
                     !playerCtrl.IsReload)
                 {
@@ -329,7 +338,9 @@ namespace Black
                             _audio.volume = GameManager.INSTANCE.volume.sfx;
                             _audio.PlayOneShot(_sfx[0]);
                             muzzleEffect.Play();
-                            
+
+                            StartCoroutine(shakeCam.ShakeCamera(0.05f, 0.1f, 0.2f));
+                           
                             //공격 데미지
                             AttackDmg();
 
@@ -427,6 +438,10 @@ namespace Black
                 }
             }
 
+            /// <summary>
+            /// 사격 지점 이펙트 효과
+            /// </summary>
+            /// <param name="hitPos"></param>
             void HitEffectPlay(Vector3 hitPos)
             {
                 hitEffect.transform.position = hitPos;

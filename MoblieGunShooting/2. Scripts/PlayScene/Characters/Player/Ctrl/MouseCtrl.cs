@@ -35,8 +35,19 @@ namespace Black
                 playerCtrl = GetComponent<PlayerCtrl>();
                 weaponeManager = GetComponent<WeaponeManager>();
 
+                if (playerCtrl.IsDrive)
+                {
+                    weaponeManager.WeaponeChange(3);
+                    weaponeID = 3;
+                }
+                if (!playerCtrl.IsDrive)
+                {
+                    weaponeManager.WeaponeChange(0);
+                    weaponeID = 0;
+                }
+
             }
-         
+
             void Update()
             {
                 if (!GameManager.INSTANCE.system.isPause)
@@ -77,12 +88,17 @@ namespace Black
                 mouseY += Input.GetAxis("Mouse X");
 
                 ////캐릭터를 좌/우로 회전
-                //mouseY = Angle(mouseY, -45, 45);
+                ////탑승상태에서는 시야 제한
+                //if (playerCtrl.IsDrive)
+                //    mouseY = Angle(mouseY, -45, 45);
+
                 ////카메라를 좌/우, 상/하로 회전
-                //mouseX = Angle(mouseX, -30, 30);
+                mouseX = Angle(mouseX, -30, 45);
 
                 transform.rotation = Quaternion.Euler(0, mouseY, 0);
-                Camera.main.transform.rotation = Quaternion.Euler(mouseX, mouseY, 0);
+                //Camera.main.transform.rotation = Quaternion.Euler(mouseX, mouseY, 0);
+                //Camera.main.transform.localRotation = Quaternion.Euler(mouseX, mouseY, 0);
+                playerCtrl.CameraRigTr.localRotation = Quaternion.Euler(mouseX, mouseY, 0); //카메라의 상위 오브젝트를 회전, 카메라는 사격 시 흔들림 효과를 준다
             }
 
             /// <summary>

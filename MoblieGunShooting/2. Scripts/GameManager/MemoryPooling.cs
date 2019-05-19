@@ -21,11 +21,17 @@ namespace Black
             public List<GameObject> ZombieList = new List<GameObject>();
             public int nZombieMax = 15;
 
+            [Header("SelfDestructZombie")]
+            public GameObject sdZombie;
+            public List<GameObject> sdZombieList = new List<GameObject>();
+            public int nSdZombieMax = 15;
+
             //================================================
 
             private void Start()
             {
                 CreateObj("Zombie", "Zombie_", nZombieMax, Zombie, ZombieList);
+                CreateObj("SDZombie", "SDZombie_", nSdZombieMax, sdZombie, sdZombieList);
             }
 
 
