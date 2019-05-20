@@ -55,6 +55,7 @@ namespace Black
                     attackBtn.SetActive(true);
                 }
 
+
             }
 
             
@@ -67,7 +68,12 @@ namespace Black
                     playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
                           weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
 
-                    if (playerCtrl.IsLive)
+                    //캐릭터가 우워 있는 상태에서 게임 시작 시
+                    //일어나는 애니메이션을 실행
+                    playerCtrl.RiseEvent();
+
+                    //일어나는 연출을 실행하지 않을떄
+                    if (playerCtrl.IsLive && !playerCtrl.IsRiseEvent)
                     {
                         ViewJoystick();
 
@@ -111,14 +117,14 @@ namespace Black
 
             void ViewJoystick()
             {
-                vir -= variableJoystick.Vertical;
-                hor += variableJoystick.Horizontal;
+                vir -= variableJoystick.Vertical * 2;
+                hor += variableJoystick.Horizontal * 2;
 
                 ////탑승 상태 시야 제한
                 //if (playerCtrl.IsDrive)
                 //    hor = Angle(hor, -30, 30);
 
-                vir = Angle(vir, -30, 45);
+                vir = Angle(vir, -45, 90);
                 
                 transform.rotation = Quaternion.Euler(0, hor, 0);
                 // Camera.main.transform.rotation = Quaternion.Euler(vir, hor, 0);

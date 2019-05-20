@@ -42,12 +42,10 @@ namespace Black
             [SerializeField, Header("생성할 적의 HP")]
             float hp = 100;
 
-            /// <summary>
-            /// 적 생성
-            /// (플레이어가 특정 지역에 도착하면
-            /// 생성 시킨다)
-            /// </summary>
-            public void EnemyAct()
+            [SerializeField, Header("생성 할 적의 이동속도")]
+            float speed = 5;
+
+            private void EnemyTypeSetting()
             {
                 //활성화 시킬 적의 타입을 확인
                 switch (enemyType)
@@ -61,6 +59,16 @@ namespace Black
                         break;
 
                 }
+            }
+
+            /// <summary>
+            /// 적 생성
+            /// (플레이어가 특정 지역에 도착하면
+            /// 생성 시킨다)
+            /// </summary>
+            public void EnemyAct()
+            {
+                EnemyTypeSetting();
 
                 //활성화 가능하면 활성화 시킴
                 if (obj != null)
@@ -75,13 +83,45 @@ namespace Black
                     }
 
                     //적 캐릭터 활성화 데이터 초기화
-                    obj.GetComponent<EnemyCtrl>().EnemyInit(true, hp, false);
+                    obj.GetComponent<EnemyCtrl>().EnemyInit(true, hp, speed, false);
 
                     obj.transform.position = transform.position;
                     obj.transform.rotation = transform.rotation;
                     obj.SetActive(true);
                 }
             }
+
+            /// <summary>
+            /// 생성 딜레이를 준다
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator EnemyWaveAct()
+            {
+                yield return new WaitForSeconds(0.5f);
+
+                EnemyTypeSetting();
+                
+                //활성화 가능하면 활성화 시킴
+                if (obj != null)
+                {
+                    if (isZombie)
+                    {
+                        obj.GetComponent<ZombieSkinSetting>().EnemyTypeSetting(zombieSkin);
+                    }
+                    else if (!isZombie)
+                    {
+                        obj.GetComponent<EnemySkinSetting>().EnemyTypeSetting(enemySkin);
+                    }
+
+                    //적 캐릭터 활성화 데이터 초기화
+                    obj.GetComponent<EnemyCtrl>().EnemyInit(true, hp, speed, false);
+
+                    obj.transform.position = transform.position;
+                    obj.transform.rotation = transform.rotation;
+                    obj.SetActive(true);
+                }
+            }
+
 
         }
     }

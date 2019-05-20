@@ -45,6 +45,9 @@ namespace Black
 
             FadeOut fadeOutCg;
 
+            [SerializeField, Header("캐릭터가 일어나는 애니메이션(플레이어 누워서 시작)")]
+            bool isRiseEvent = false;
+
             [SerializeField, Header("플레이어를 이벤트 연출로 사용할지 결정, 페이드 아웃 시 메인 버튼 관계")]
             bool isEventPlayer = false;
 
@@ -52,6 +55,9 @@ namespace Black
 
             [SerializeField]
             MarkerCam markerCamTr;
+
+            float tempSpeed = 0;
+
 
             #region Set,Get
 
@@ -199,6 +205,19 @@ namespace Black
                 }
             }
 
+            public bool IsRiseEvent
+            {
+                get
+                {
+                    return isRiseEvent;
+                }
+
+                set
+                {
+                    isRiseEvent = value;
+                }
+            }
+
             #endregion
 
             private void Awake()
@@ -210,7 +229,10 @@ namespace Black
                 PlayerUI.CurHP(Hp, MaxHp);
 
                 FadeOutCg = GetComponent<FadeOut>();
+
             }
+
+
 
             /// <summary>
             /// 에임이 적을 바라보면 정보를 보여준다 
@@ -251,7 +273,32 @@ namespace Black
                 }
             }
 
+            /// <summary>
+            /// 게임 시작 시 캐릭터가 일어나는 애니메이션
+            /// </summary>
+            public void RiseEvent()
+            {
+                if(IsRiseEvent)
+                {
+                    //밝아지면 일어나는 애니메이션
+                    aniCtrl.ReadyAni(true); //플레이어 애니
+                    deadCamera.RiseCamAni(); //카메라 애니
 
+                    //애니메이션 실행 후 이벤트 종료, 이벤트 연출 카메라 비활성화 
+                    StartCoroutine(RiseEventCancle());
+                }
+            }
+
+            IEnumerator RiseEventCancle()
+            {
+
+                yield return new WaitForSeconds(2.5f);
+
+                //연출이 끝나면 게임을 플레이 할수 있게 한다
+                aniCtrl.ReadyAni(false);
+                IsRiseEvent = false;
+                deadCamera.Ani.enabled = false;
+            }
         }
 
     }

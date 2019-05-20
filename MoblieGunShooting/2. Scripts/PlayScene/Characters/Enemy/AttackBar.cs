@@ -28,11 +28,14 @@ namespace Black
             /// </summary>
             Animator attackAni;
 
+            PlayerCtrl player;
+
             readonly int hashAttack = Animator.StringToHash("Attack");
 
             private void Awake()
             {
                 attackAni = AttackTextMesh.GetComponent<Animator>();
+                player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
             }
 
             private void OnEnable()
@@ -59,8 +62,9 @@ namespace Black
 
             public void LookAtCam()
             {
-                UIObj.transform.LookAt(new Vector3( Camera.main.transform.position.x, UIObj.transform.position.y,
+                UIObj.transform.LookAt(new Vector3(Camera.main.transform.position.x, UIObj.transform.position.y,
                     Camera.main.transform.position.z));
+
             }
 
         }

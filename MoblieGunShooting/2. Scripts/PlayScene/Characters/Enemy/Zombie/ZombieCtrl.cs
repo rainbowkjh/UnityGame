@@ -29,7 +29,8 @@ namespace Black
             {
                 base.Start();
                 TargetTr = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-                
+
+                nav.speed = Speed;
             }
 
             void Update()
@@ -82,6 +83,7 @@ namespace Black
                 nav.destination = TargetTr.position;
 
                 Ani.RunAni(true);
+                AttackCancle(); //공격 게이지(텍스트) 비활성화
             }
 
            /// <summary>

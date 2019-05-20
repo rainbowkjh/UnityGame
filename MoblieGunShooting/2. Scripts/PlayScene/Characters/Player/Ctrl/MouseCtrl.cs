@@ -56,6 +56,7 @@ namespace Black
                     playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
                       weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
 
+   
                     if (playerCtrl.IsLive)
                     {
                         MouseView();
@@ -93,7 +94,7 @@ namespace Black
                 //    mouseY = Angle(mouseY, -45, 45);
 
                 ////카메라를 좌/우, 상/하로 회전
-                mouseX = Angle(mouseX, -30, 45);
+                mouseX = Angle(mouseX, -30, 90);
 
                 transform.rotation = Quaternion.Euler(0, mouseY, 0);
                 //Camera.main.transform.rotation = Quaternion.Euler(mouseX, mouseY, 0);

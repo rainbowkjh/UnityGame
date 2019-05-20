@@ -9,7 +9,7 @@ namespace Black
     {   
         public class EnemyWave : MonoBehaviour
         {
-            [SerializeField, Header("Wave Time")]
+            [SerializeField, Header("Wave Time, 0.01은 한명씩 나옴")]
             float waveTime = 0;
 
             bool isStart = false;
@@ -23,24 +23,29 @@ namespace Black
             {
                 if(isStart)
                 {
-                    if(waveTime > 0)
+                    if (waveTime > 0)
                     {
                         waveTime -= Time.deltaTime * 1;
 
                         //적을 생성 시킨다
-                        for(int i=0;i<createEnemy.Length;i++)
+                        for (int i = 0; i < createEnemy.Length; i++)
                         {
-                            createEnemy[i].EnemyAct();
+                            createEnemy[i].EnemyAct();                            
                         }
+
+
                     }
 
-                    else if(waveTime <=0)
+                    else if (waveTime <= 0)
                     {
+                        waveTime = 0;
                         isStart = false;
                         isEnd = true;
                     }
                 }
             }
+
+
 
             private void OnTriggerEnter(Collider other)
             {
@@ -54,7 +59,6 @@ namespace Black
                 }                
 
             }
-
 
         }
 

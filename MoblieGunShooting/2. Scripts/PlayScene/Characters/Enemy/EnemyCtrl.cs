@@ -102,12 +102,15 @@ namespace Black
             /// </summary>
             /// <param name="live"></param>
             /// <param name="maxHp"></param>
-            public void EnemyInit(bool live, float maxHp, bool dead)
+            public void EnemyInit(bool live, float maxHp, float speed, bool dead)
             {
                 IsLive = live;
                 Hp = maxHp;
                 MaxHp = maxHp;
                 isDead = dead;
+                Speed = speed;
+
+
             }
 
             /// <summary>
@@ -159,6 +162,12 @@ namespace Black
 
                 yield return new WaitForSeconds(1.0f);
                 IsFire = false;
+            }
+
+            protected void AttackCancle()
+            {
+                AttackWait = false;
+                attackBar.AttackBarAni(AttackWait);
             }
 
             /// <summary>

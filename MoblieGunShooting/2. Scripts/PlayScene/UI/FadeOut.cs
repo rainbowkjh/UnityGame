@@ -21,10 +21,23 @@ namespace Black
             [SerializeField, Header("GameOverText, 메인 버튼")]
             GameObject mainBtn;
 
+            public CanvasGroup Cg
+            {
+                get
+                {
+                    return cg;
+                }
+
+                set
+                {
+                    cg = value;
+                }
+            }
+
             private void Start()
             {
-                cg.alpha = 0.0f;
-                cg.blocksRaycasts = false; //터치를 방해하기 떄문에 끈다
+                Cg.alpha = 0.0f; 
+                Cg.blocksRaycasts = false; //터치를 방해하기 떄문에 끈다
                 mainBtn.SetActive(false);
             }
 
@@ -32,12 +45,13 @@ namespace Black
             /// 화면을 천천히 보이게 한다
             /// </summary>
             public void FadeInPlay()
-            {
-                cg.blocksRaycasts = false;
+            {                
+                Cg.blocksRaycasts = false;
+                mainBtn.SetActive(false);
 
-                if (cg.alpha > 0.0f)
+                if (Cg.alpha > 0.0f)
                 {
-                    cg.alpha -= Time.deltaTime * fadeOutSpeed;
+                    Cg.alpha -= Time.deltaTime * fadeOutSpeed;
                 }
             }
 
@@ -47,11 +61,11 @@ namespace Black
             /// </summary>
             public void FadeOutPlay()
             {
-                cg.blocksRaycasts = true; // 게임 종료로 다른 기능 버튼을 못 누르게 한다
+                Cg.blocksRaycasts = true; // 게임 종료로 다른 기능 버튼을 못 누르게 한다
 
-                if (cg.alpha < 1.0f)
+                if (Cg.alpha < 1.0f)
                 {
-                    cg.alpha += Time.deltaTime * fadeOutSpeed;
+                    Cg.alpha += Time.deltaTime * fadeOutSpeed;
                 }
             }
 
@@ -61,14 +75,14 @@ namespace Black
             /// </summary>
             public void GameOverFade()
             {
-                cg.blocksRaycasts = true; // 게임 종료로 다른 기능 버튼을 못 누르게 한다
+                Cg.blocksRaycasts = true; // 게임 종료로 다른 기능 버튼을 못 누르게 한다
 
-                if (cg.alpha < 1.0f)
+                if (Cg.alpha < 1.0f)
                 {
-                    cg.alpha += Time.deltaTime * fadeOutSpeed;
+                    Cg.alpha += Time.deltaTime * fadeOutSpeed;
                 }
 
-                if (cg.alpha == 1)
+                if (Cg.alpha == 1)
                 {
                     MainBtnAct();
                 }

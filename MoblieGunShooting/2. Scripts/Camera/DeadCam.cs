@@ -7,6 +7,7 @@ public class DeadCam : MonoBehaviour
     Animator ani;
 
     readonly int hashDeadCam = Animator.StringToHash("DeadCam");
+    readonly int hashRiseCam = Animator.StringToHash("Rise");
 
     public Animator Ani
     {
@@ -34,6 +35,12 @@ public class DeadCam : MonoBehaviour
         //Debug.Log("Ani : " + Ani);
         Ani.enabled = true;
         Ani.SetTrigger(hashDeadCam);
+    }
+
+    public void RiseCamAni()
+    {
+        Ani.enabled = true;
+        Ani.SetTrigger(hashRiseCam);
     }
 
 }

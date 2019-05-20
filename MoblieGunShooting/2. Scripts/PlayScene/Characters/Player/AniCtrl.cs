@@ -16,6 +16,7 @@ namespace Black
             readonly int hashReload = Animator.StringToHash("Reload");
             readonly int hashLive = Animator.StringToHash("Live");
             readonly int hashDead = Animator.StringToHash("Dead");
+            readonly int hashReady = Animator.StringToHash("Ready");
 
             private void Start()
             {
@@ -46,6 +47,11 @@ namespace Black
             public void DeadAni()
             {
                 ani.SetTrigger(hashDead);
+            }
+
+            public void ReadyAni(bool ready)
+            {
+                ani.SetBool(hashReady, ready);
             }
         }
 

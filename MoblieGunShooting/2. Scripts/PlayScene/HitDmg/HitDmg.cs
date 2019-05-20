@@ -18,15 +18,35 @@ namespace Black
         {
             float dmg;
 
+            [SerializeField,Header("피격 대상(스크립트 적용된 캐릭터)")]
             protected CharactersData charData;
 
             [SerializeField, Header("플레이어의 경우 피격 당하면 카메라 흔들림")]
             shakeCamera shakeCam;
-            
-            private void Start()
+
+            /// <summary>
+            /// 머리 부위인지 구분(추가 데미지)
+            /// </summary>
+            [SerializeField, Header("Head Dmg")]
+            bool isHeadDmg = false;
+
+            public bool IsHeadDmg
             {
-                charData = GetComponent<CharactersData>();
+                get
+                {
+                    return isHeadDmg;
+                }
+
+                set
+                {
+                    isHeadDmg = value;
+                }
             }
+
+            //private void Start()
+            //{
+            //    charData = GetComponent<CharactersData>();
+            //}
 
             /// <summary>
             /// 일반 타격
@@ -34,37 +54,41 @@ namespace Black
             /// <param name="dmg"></param>
             virtual public void HitDamage(float dmg)
             {
-                if (charData.Hp > 0)
+                if(charData != null)
                 {
-                    charData.Hp -= dmg;
-
-                    //HitDmg 스크립트 적용 된 대상이 플레이어
-                    if (this.transform.tag.Equals("Player"))
+                    if (charData.Hp > 0)
                     {
-                        //Debug.Log("Hit");  
+                        charData.Hp -= dmg;
 
-                        //플레이어 피격 UI
-                        PlayerCtrl player = GetComponent<PlayerCtrl>();
-                        player.PlayerUI.PainSprite(dmg);
+                        //HitDmg 스크립트 적용 된 대상이 플레이어
+                        if (this.transform.tag.Equals("Player"))
+                        {
+                            //Debug.Log("Hit");  
 
-                        StartCoroutine(shakeCam.ShakeCamera(0.3f, 0.3f, 0.3f));
+                            //플레이어 피격 UI
+                            PlayerCtrl player = GetComponent<PlayerCtrl>();
+                            player.PlayerUI.PainSprite(dmg);
+
+                            StartCoroutine(shakeCam.ShakeCamera(0.3f, 0.3f, 0.3f));
+                        }
+                    }
+
+
+                    if (charData.Hp <= 0 &&
+                        charData.IsLive)
+                    {
+                        charData.Hp = 0;
+                        charData.IsLive = false;
+
+                        //생성되는 적이 아니라 엑스트라 적
+                        if (this.transform.tag.Equals("Enemy"))
+                        {
+                            StartCoroutine(EnemyDisable());
+                        }
+
                     }
                 }
-                    
                 
-                if (charData.Hp <= 0 &&
-                    charData.IsLive)
-                {
-                    charData.Hp = 0;
-                    charData.IsLive = false;
-
-                    //생성되는 적이 아니라 엑스트라 적
-                    if (this.transform.tag.Equals("Enemy"))
-                    {
-                        StartCoroutine(EnemyDisable());
-                    }
-
-                }
             }
 
             /// <summary>
@@ -72,11 +96,32 @@ namespace Black
             /// 1.5배
             /// </summary>
             /// <param name="dmg"></param>
-            public void HeadDamager(float dmg)
+            public void HeadDamage(float dmg)
             {
                 float damage = dmg * 1.5f;
 
-                charData.Hp -= damage;
+                if(charData != null)
+                {                   
+
+                    if(charData.Hp > 0)
+                    {
+                        charData.Hp -= damage;
+                    }
+
+                    if(charData.Hp <= 0 &&
+                        charData.IsLive)
+                    {
+                        charData.Hp = 0;
+                        charData.IsLive = false;
+
+                        //생성되는 적이 아니라 엑스트라 적
+                        if (this.transform.tag.Equals("Enemy"))
+                        {
+                            StartCoroutine(EnemyDisable());
+                        }
+                    }
+                }
+                
             }
 
 

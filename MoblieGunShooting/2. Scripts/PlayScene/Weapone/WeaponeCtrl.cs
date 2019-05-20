@@ -238,6 +238,9 @@ namespace Black
             [SerializeField, Header("Shake Cam")]
             shakeCamera shakeCam;
 
+            [SerializeField, Header("재장전 딜레이 권총,소총 1.5, 샷건 0.5")]
+            float reloadSpeed = 1.5f;
+
             private void Awake()
             {
                 parsingData = GameObject.Find("ParSingData").GetComponent<ParsingData>();
@@ -340,9 +343,13 @@ namespace Black
                             muzzleEffect.Play();
 
                             StartCoroutine(shakeCam.ShakeCamera(0.05f, 0.1f, 0.2f));
-                           
+
                             //공격 데미지
-                            AttackDmg();
+                            if (WeaponeState == 0 || WeaponeState == 1)
+                                AttackDmg();
+
+                            if (WeaponeState == 2)
+                                AttackDmgEx();
 
                             playerCtrl.AimUI.FireAimAni(); //에임이 벌어진다
 
@@ -404,12 +411,15 @@ namespace Black
                 }
 
                 playerCtrl.PlayerUI.AmmoInfo(NCurBullet, NMag);
-                yield return new WaitForSeconds(1.5f);
+                yield return new WaitForSeconds(reloadSpeed);
                 playerCtrl.IsReload = false;
             }
 
             /// <summary>
             /// 공격 데미지
+            /// 권총과 소총
+            /// 사정거리 무한
+            /// 탄 퍼짐 없음
             /// </summary>
             void AttackDmg()
             {
@@ -418,24 +428,62 @@ namespace Black
                 layerMask = ~layerMask;
 
                 if (Physics.Raycast(playerCtrl.FirePosTr.position, playerCtrl.FirePosTr.forward,
-                    out hit, 500, layerMask))
+                    out hit, Mathf.Infinity, layerMask))
                 {
-                    Debug.DrawLine(playerCtrl.FirePosTr.position, hit.point, Color.red);
-
-                    HitEffectPlay(hit.point);
-
-                    float dmg = Random.Range(FMinDmg, MaxDmg);
-
-                    playerCtrl.PlayerUI.DmgInfoprint(dmg);
-                    //StartCoroutine(playerCtrl.PlayerUI.DmgInfo(dmg));
-
-                    if(hit.transform.GetComponent<HitDmg>())
-                    {
-                        hit.transform.GetComponent<HitDmg>().HitDamage(dmg);
-                        playerCtrl.PlayerUI.EnemyHpInfo(hit.transform.GetComponent<CharactersData>().Hp,
-                            hit.transform.GetComponent<CharactersData>().MaxHp);
-                    }
+                    HitDamageValue(hit);
                 }
+            }
+
+            /// <summary>
+            /// 데미지 적용 부분
+            /// </summary>
+            /// <param name="hit"></param>
+            void HitDamageValue(RaycastHit hit)
+            {
+                Debug.DrawLine(playerCtrl.FirePosTr.position, hit.point, Color.red);
+
+                HitEffectPlay(hit.point);
+
+                float dmg = Random.Range(FMinDmg, MaxDmg);
+
+                playerCtrl.PlayerUI.DmgInfoprint(dmg);
+                //StartCoroutine(playerCtrl.PlayerUI.DmgInfo(dmg));
+
+                if (hit.transform.GetComponent<HitDmg>())
+                {
+                    if (!hit.transform.GetComponent<HitDmg>().IsHeadDmg)
+                        hit.transform.GetComponent<HitDmg>().HitDamage(dmg);
+
+                    if (hit.transform.GetComponent<HitDmg>().IsHeadDmg)
+                        hit.transform.GetComponent<HitDmg>().HeadDamage(dmg);
+
+                    playerCtrl.PlayerUI.EnemyHpInfo(hit.transform.GetComponent<CharactersData>().Hp,
+                        hit.transform.GetComponent<CharactersData>().MaxHp);
+                }
+            }
+
+            /// <summary>
+            /// 샷건(탄 퍼짐)
+            /// 사정거리
+            /// </summary>
+            void AttackDmgEx()
+            {
+                RaycastHit hit;
+                int layerMask = 1 << 8;
+                layerMask = ~layerMask;
+
+                //8번 랜덤 방향으로 발사
+                for (int i = 0; i < 8; i++)
+                {
+                    if (Physics.Raycast(playerCtrl.FirePosTr.position, playerCtrl.FirePosTr.forward + Random.onUnitSphere * 0.2f,
+                    out hit, 500))
+                    {
+                        HitDamageValue(hit);
+
+                    }
+
+                }
+
             }
 
             /// <summary>
