@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 게임 매니져(싱글턴)
@@ -114,6 +115,12 @@ namespace Black
                 Time.timeScale = 1;
             }
 
+
+            //private void Update()
+            //{
+            //    if (Input.GetKeyDown(KeyCode.Q))
+            //        SceneManager.LoadScene("Stage1");
+            //}
 
         }
 

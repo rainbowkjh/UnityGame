@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 플레이어가 쓰러지면
@@ -20,6 +21,9 @@ namespace Black
 
             [SerializeField, Header("GameOverText, 메인 버튼")]
             GameObject mainBtn;
+            
+            [SerializeField, Header("이벤트 연출 후 이동 스테이지 이름")]
+            string nextStageName;
 
             public CanvasGroup Cg
             {
@@ -67,6 +71,18 @@ namespace Black
                 {
                     Cg.alpha += Time.deltaTime * fadeOutSpeed;
                 }
+
+                if(Cg.alpha == 1.0f)
+                {
+                    StartCoroutine(NextStage());
+                }
+            }
+
+            IEnumerator NextStage()
+            {
+                yield return new WaitForSeconds(1.0f);
+
+                SceneManager.LoadScene(nextStageName);
             }
 
             /// <summary>

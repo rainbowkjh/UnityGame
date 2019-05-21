@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Black.DmgManager;
+using Black.Weapone;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -40,7 +42,7 @@ namespace Black
             [SerializeField, Header("Attck Max Dmg"), Range(50f, 200f)]
             float maxDmg;
 
-            [SerializeField, Header("Attack Min Speed"), Range(0.01f, 0.02f)]
+            [SerializeField, Header("Attack Min Speed"), Range(0.01f, 0.1f)]
             float minAttackSpeed;
 
             [SerializeField, Header("Attack Max Speed"), Range(0.5f, 1f)]
@@ -110,7 +112,10 @@ namespace Black
                 isDead = dead;
                 Speed = speed;
 
-
+                //다시 활성화 되는 적이 공격 타임을
+                //이어서 사용하면 바로 공격을 하기 때문에
+                //0으로 초기화
+                delayTime = 0;
             }
 
             /// <summary>
@@ -179,6 +184,22 @@ namespace Black
                 return Random.Range(minDmg, maxDmg);
                 
             }
+
+            /// <summary>
+            /// 플레이어의 수류탄을 감지한다
+            /// </summary>
+            /// <param name="other"></param>
+            private void OnTriggerStay(Collider other)
+            {
+                if(other.tag.Equals("GreadeArea"))
+                {
+                    if(other.GetComponent<GreadeHitColl>().IsAttack)
+                    {
+                        GetComponent<HitDmg>().HitDamage(other.GetComponent<GreadeHitColl>().GreadeDMG);                      
+                    }
+                }
+            }
+
         }
 
     }

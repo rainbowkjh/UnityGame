@@ -283,7 +283,7 @@ namespace Black
 
                     WeaponeList.Add(data);
 
-                    data = null; ;
+                    data = null; 
                 }
             }
         }

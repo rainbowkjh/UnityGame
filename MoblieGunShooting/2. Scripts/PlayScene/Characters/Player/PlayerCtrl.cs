@@ -13,7 +13,8 @@ namespace Black
 {
     namespace Characters
     {
-        [RequireComponent(typeof(AniCtrl))]
+        [RequireComponent(typeof(AniCtrl)),
+            RequireComponent(typeof(ItemManager))]
         public class PlayerCtrl : CharactersData
         {
             
@@ -57,7 +58,6 @@ namespace Black
             MarkerCam markerCamTr;
 
             float tempSpeed = 0;
-
 
             #region Set,Get
 
@@ -280,6 +280,8 @@ namespace Black
             {
                 if(IsRiseEvent)
                 {
+                    IsRiseEvent = false;
+
                     //밝아지면 일어나는 애니메이션
                     aniCtrl.ReadyAni(true); //플레이어 애니
                     deadCamera.RiseCamAni(); //카메라 애니
@@ -291,13 +293,14 @@ namespace Black
 
             IEnumerator RiseEventCancle()
             {
-
                 yield return new WaitForSeconds(2.5f);
 
                 //연출이 끝나면 게임을 플레이 할수 있게 한다
                 aniCtrl.ReadyAni(false);
-                IsRiseEvent = false;
+                
                 deadCamera.Ani.enabled = false;
+
+              //  deadCamera.transform.rotation = Quaternion.identity;
             }
         }
 

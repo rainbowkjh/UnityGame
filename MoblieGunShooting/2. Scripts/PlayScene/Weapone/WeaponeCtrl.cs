@@ -345,7 +345,7 @@ namespace Black
                             StartCoroutine(shakeCam.ShakeCamera(0.05f, 0.1f, 0.2f));
 
                             //공격 데미지
-                            if (WeaponeState == 0 || WeaponeState == 1)
+                            if (WeaponeState == 0 || WeaponeState == 1 || WeaponeState == 3)
                                 AttackDmg();
 
                             if (WeaponeState == 2)
@@ -431,6 +431,7 @@ namespace Black
                     out hit, Mathf.Infinity, layerMask))
                 {
                     HitDamageValue(hit);
+                    HitItemPickUp(hit);
                 }
             }
 
@@ -459,6 +460,32 @@ namespace Black
 
                     playerCtrl.PlayerUI.EnemyHpInfo(hit.transform.GetComponent<CharactersData>().Hp,
                         hit.transform.GetComponent<CharactersData>().MaxHp);
+                }
+            }
+
+            /// <summary>
+            /// 아이템을 공격하면 습득한다
+            /// 샷건은 제외(중복 습득 가능성이 있기 때문에..)
+            /// </summary>
+            /// <param name="hit"></param>
+            void HitItemPickUp(RaycastHit hit)
+            {
+                HitEffectPlay(hit.point);
+
+                if(hit.transform.tag.Equals("Grenade"))
+                {
+                    playerCtrl.GetComponent<ItemManager>().NGrenadeCount++;
+                    playerCtrl.GetComponent<ItemManager>().GrenadeCountText();
+
+                    hit.transform.gameObject.SetActive(false);
+                }
+
+                if(hit.transform.tag.Equals("Recovery"))
+                {
+                    playerCtrl.GetComponent<ItemManager>().NRecoveryCount++;
+                    playerCtrl.GetComponent<ItemManager>().RecoveryCountText();
+
+                    hit.transform.gameObject.SetActive(false);
                 }
             }
 
