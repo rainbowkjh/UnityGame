@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
+/// Trooper의 폭발 효과
+/// 
 /// 스크립트를 적용 시킨
 /// 오브젝트를 정해진 시간에
 /// 폭발 시킨다
@@ -32,6 +34,11 @@ namespace Black
 
             [SerializeField, Header("폭발 타이머")]
             float explosionTime;
+
+            Rigidbody rigidbody;
+
+            [SerializeField, Header("폭발 시 위로 미는 힘")]
+            float force;
 
             bool isExplosion = false;
 
@@ -71,11 +78,12 @@ namespace Black
             private void Start()
             {
                 _audio = GetComponent<AudioSource>();
+                rigidbody = GetComponent<Rigidbody>();
             }
 
             private void SfxVolume()
             {
-                _audio.volume = GameManager.INSTANCE.volume.sfx;
+                _audio.volume = GameManager.INSTANCE.volume.sfx * 2;
             }
 
             private void AudioPlay()
@@ -106,7 +114,9 @@ namespace Black
                     {
                         explosionTime = 0;
 
-                         IsExplosion = true;
+                        ExplosionShake();
+
+                        IsExplosion = true;
 
                         explosionPar.Play();
 
@@ -163,6 +173,8 @@ namespace Black
             {
                 if(!IsExplosion)
                 {
+                    ExplosionShake();
+
                     IsExplosion = true;
 
                     explosionPar.Play();
@@ -172,6 +184,14 @@ namespace Black
                     AudioPlay();
 
                 }
+            }
+
+            /// <summary>
+            /// 폭발 시 차량을 위로 띄운다
+            /// </summary>
+            void ExplosionShake()
+            {
+                rigidbody.AddForce(Vector3.up * force, ForceMode.Impulse);
             }
 
         }

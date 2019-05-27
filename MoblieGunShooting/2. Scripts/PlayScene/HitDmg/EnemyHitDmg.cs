@@ -39,14 +39,43 @@ namespace Black
 
                     //Enemy 추가되는 내용==============
                     GameManager.INSTANCE.NEnemyCount--;
-                 
+                    //player.NUpgradePoint += 50;
+                    playerUI.PointValue();
 
+                    //Debug.Log("ZombieDead");
                     StartCoroutine(EnemyDisable());
                 }
             }
 
+            public override void HeadDamage(float dmg)
+            {
+                float damage = dmg * 1.5f;
 
- 
+                if (charData != null)
+                {
+                    if (charData.Hp > 0)
+                    {
+                        charData.Hp -= damage;
+                    }
+
+                    if (charData.Hp <= 0 &&
+                        charData.IsLive)
+                    {
+                        charData.Hp = 0;
+                        charData.IsLive = false;
+
+                        //Enemy 추가되는 내용==============
+                        GameManager.INSTANCE.NEnemyCount--;
+
+                        //player.NUpgradePoint += 100;
+                        playerUI.PointValue();
+                    }
+
+                    Debug.Log("Head Shot");
+                }
+
+            }
+
         }
 
     }

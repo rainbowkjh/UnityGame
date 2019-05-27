@@ -158,7 +158,7 @@ namespace Black
             /// 공격 데미지 적용 타이밍
             /// </summary>
             /// <returns></returns>
-            IEnumerator AttackDelay()
+           virtual protected IEnumerator AttackDelay()
             {
                 delayTime = 0;
                 IsFire = true;
@@ -169,6 +169,9 @@ namespace Black
                 IsFire = false;
             }
 
+            /// <summary>
+            /// 공격 상태 초기화(게이지 초기화)
+            /// </summary>
             protected void AttackCancle()
             {
                 AttackWait = false;
@@ -195,6 +198,8 @@ namespace Black
                 {
                     if(other.GetComponent<GreadeHitColl>().IsAttack)
                     {
+                        //연속 데미지를 막기 위해 바로 false, 여러명의 적 중 한명만 데미지를 받음;;
+                        // other.GetComponent<GreadeHitColl>().IsAttack = false;  
                         GetComponent<HitDmg>().HitDamage(other.GetComponent<GreadeHitColl>().GreadeDMG);                      
                     }
                 }

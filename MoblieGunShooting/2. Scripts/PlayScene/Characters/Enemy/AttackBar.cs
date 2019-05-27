@@ -62,8 +62,12 @@ namespace Black
 
             public void LookAtCam()
             {
-                UIObj.transform.LookAt(new Vector3(Camera.main.transform.position.x, UIObj.transform.position.y,
+                if(Camera.main !=null)
+                {
+                    UIObj.transform.LookAt(new Vector3(Camera.main.transform.position.x, UIObj.transform.position.y,
                     Camera.main.transform.position.z));
+                }
+                
 
             }
 

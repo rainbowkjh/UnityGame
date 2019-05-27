@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 /// <summary>
 /// 엑스트라 적 또는 플레이어에 해당
 /// 엑스트라 - 플레이어가 접근해서 생성 되는 적이 아니고
@@ -43,6 +44,16 @@ namespace Black
                 }
             }
 
+            protected ItemManager player;
+            protected Black.UI.PlayerUI playerUI;
+
+            private void Start()
+            {
+                player = GameObject.FindGameObjectWithTag("Player").GetComponent<ItemManager>();
+                playerUI = GameObject.FindGameObjectWithTag("Player").GetComponent<Black.UI.PlayerUI>();
+
+            }
+
             //private void Start()
             //{
             //    charData = GetComponent<CharactersData>();
@@ -68,6 +79,9 @@ namespace Black
                             //플레이어 피격 UI
                             PlayerCtrl player = GetComponent<PlayerCtrl>();
                             player.PlayerUI.PainSprite(dmg);
+                            shakeCam.IsPostSwitch = true;
+                            shakeCam.HitPostSetting();
+
 
                             StartCoroutine(shakeCam.ShakeCamera(0.3f, 0.3f, 0.3f));
                         }
@@ -83,7 +97,10 @@ namespace Black
                         //생성되는 적이 아니라 엑스트라 적
                         if (this.transform.tag.Equals("Enemy"))
                         {
-                            StartCoroutine(EnemyDisable());
+                            //player.NUpgradePoint += 50;
+                            playerUI.PointValue();
+
+                            StartCoroutine(EnemyDisable());                            
                         }
 
                     }
@@ -96,13 +113,12 @@ namespace Black
             /// 1.5배
             /// </summary>
             /// <param name="dmg"></param>
-            public void HeadDamage(float dmg)
+            virtual public void HeadDamage(float dmg)
             {
                 float damage = dmg * 1.5f;
 
                 if(charData != null)
-                {                   
-
+                {   
                     if(charData.Hp > 0)
                     {
                         charData.Hp -= damage;
@@ -117,9 +133,14 @@ namespace Black
                         //생성되는 적이 아니라 엑스트라 적
                         if (this.transform.tag.Equals("Enemy"))
                         {
+                            //player.NUpgradePoint += 100;
+                            playerUI.PointValue();
+
                             StartCoroutine(EnemyDisable());
                         }
                     }
+
+                    Debug.Log("Head Shot");
                 }
                 
             }

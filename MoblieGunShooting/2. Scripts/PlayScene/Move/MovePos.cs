@@ -33,6 +33,7 @@ namespace Black
 
             [SerializeField, Header("도착하면 이벤트 발생 상태(정지)")]
             bool isEvent = true;
+            bool isTempEvent; //이벤트 재사용
 
             /// <summary>
             /// 콜라이더에 도착했는지 확인
@@ -50,6 +51,10 @@ namespace Black
             [SerializeField, Header("차량 탑승 및 AI등")]
             private string tagName;
 
+            [SerializeField, Header("다음 목표물 이동 타이머")]
+            float moveTimer = 0;
+            float tempMoveTimer;
+
             private void Start()
             {
                 //생성 시킬 적이 있으면
@@ -57,7 +62,8 @@ namespace Black
                 {
                     enemyCreate = enemyArea.GetComponentsInChildren<EnemyCreate>();                    
                 }
-                    
+                isTempEvent = isEvent;
+                tempMoveTimer = moveTimer;
             }
 
 
@@ -102,31 +108,109 @@ namespace Black
             }
             #endregion
 
+            private void OnTriggerExit(Collider other)
+            {
+                if(other.tag.Equals("Player"))
+                {
+                    isEvent = isTempEvent;
+                    moveTimer = tempMoveTimer;
+                }
+            }
+
             private void OnTriggerStay(Collider other)
             {
-                if (other.transform.tag.Equals("Player"))
+                if(IsPlayerPos)
                 {
-                    //이벤트 발생 지점일 경우 정지
-                    if (isEvent)
+                    if (other.transform.tag.Equals("Player"))
                     {
-                        StartCoroutine(CharStop(other));
+                        //차량 탑승을 안하고 있을때만
+                        if (!other.GetComponent<PlayerCtrl>().IsDrive)
+                        {
+                            //이벤트 발생 지점일 경우 정지
+                            if (isEvent && moveTimer ==0)
+                            {                                
+                                StartCoroutine(CharStop(other));
 
-                        if (GameManager.INSTANCE.NEnemyCount == 0)
-                            isEvent = false;
+                                if (GameManager.INSTANCE.NEnemyCount == 0)
+                                    isEvent = false;
+
+                            }
+
+                            if (!isEvent)
+                            {
+                                if (nextPos != null)
+                                    StartCoroutine(CharMove(other));
+                            }
+
+                            if(isEvent && moveTimer > 0)
+                            {
+                                moveTimer -= Time.deltaTime * 1;
+
+                                StartCoroutine(CharStopTimer(other));
+
+                                if (moveTimer <=0)
+                                {
+                                    moveTimer = 0;
+                                    StartCoroutine(CharMove(other));
+                                }
+                            }
+                        }
 
                     }
+                }
+                
 
-                    if (!isEvent)
+              else  if(other.transform.tag.Equals("Enemy"))
+                {
+                    //Debug.Log("Enemy");
+
+                    //정지 공격
+                    if(isEvent)
                     {
+                        //Debug.Log("Attack");
+                        other.GetComponent<CharactersData>().IsStop = true; //정지
+                    }
+
+                    //이동
+                    if(!isEvent)
+                    {
+
+                        //Debug.Log("Move");
                         if (nextPos != null)
                             StartCoroutine(CharMove(other));
                     }
 
-                }
+                    if (isEvent && moveTimer > 0)
+                    {
+                        moveTimer -= Time.deltaTime * 1;
 
+                        StartCoroutine(CharStopTimer(other));
+
+                        if (moveTimer <= 0)
+                        {
+                            moveTimer = 0;
+                            StartCoroutine(CharMove(other));
+                            isEvent = false;
+                        }
+                    }
+
+                    other.transform.rotation = Quaternion.Slerp(other.transform.rotation,
+                               this.transform.rotation, 10 * Time.deltaTime);
+                }
 
                 if(other.tag.Equals(tagName))
                 {
+                    
+                    float rot;
+                    if(tagName.Equals("BlackHawk"))
+                    {
+                        rot = 5; //블랙호크의 회전 속도
+                    }
+                    else
+                    {
+                        rot = 25;
+                    }
+
                     if(isEvent)
                     {
                         CarStop(other);
@@ -135,12 +219,13 @@ namespace Black
                     if(!isEvent)
                     {
                         //Debug.Log("Tag : " + tagName);
-                        CarMove(other);
+                        CarMove(other, rot);
                     }
                 }
 
             }
 
+            
 
             /// <summary>
             /// 콜라이더에 도착하면 정지 시킴
@@ -153,7 +238,7 @@ namespace Black
             {
                 if (!isEnter)
                 {
-                    GameManager.INSTANCE.NEnemyCount = enemyCreate.Length; //생성된 적의 수를 담는다
+                    GameManager.INSTANCE.NEnemyCount += enemyCreate.Length; //생성된 적의 수를 담는다
                     isEnter = true;
 
                     yield return new WaitForSeconds(1.0f);
@@ -163,6 +248,20 @@ namespace Black
 
                     //적을 생성 시킴
                     CreateEnemyAct();
+                }
+            }
+
+            IEnumerator CharStopTimer(Collider other)
+            {
+                if (!isEnter)
+                {
+                    isEnter = true;
+
+                    yield return new WaitForSeconds(1.0f);
+
+                    //해당 캐릭터를 정지 시킴
+                    other.GetComponent<CharactersData>().IsStop = true;
+
                 }
             }
 
@@ -191,6 +290,7 @@ namespace Black
                 coll.GetComponent<CharactersData>().Speed = moveSpeed;
                 //다음 위치를 보낸다
                 coll.GetComponent<CharactersData>().NextMove = nextPos;
+
             }
 
 
@@ -214,18 +314,22 @@ namespace Black
 
             /// <summary>
             /// 탑승 차량 이동
+            /// 차량 또는 헬기의 방향 전환 속도
             /// </summary>
             /// <param name="coll"></param>
-            void CarMove(Collider coll)
+            void CarMove(Collider coll, float rotSpeed)
             {
                 TrooperCar car = coll.GetComponent<TrooperCar>();
 
                 car.transform.rotation = Quaternion.Slerp(car.transform.rotation,
-                    this.transform.rotation, 25 * Time.deltaTime);
+                    this.transform.rotation, rotSpeed * Time.deltaTime);
 
-                car.CarState = TrooperState.Excel;
-                car.CarSpeed = moveSpeed;
-                car.NextPos = nextPos;
+                if(nextPos !=null)
+                {
+                    car.CarState = TrooperState.Excel;
+                    car.CarSpeed = moveSpeed;
+                    car.NextPos = nextPos;
+                }                
 
             }
 

@@ -7,7 +7,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/// <summary>
+/// 플레이어 전용 무기 스크립트..
+/// AI는 계획에 없었는데...
+/// 갑자기 추가하게 되었음...
+/// 근데..너무 플레이어 위주로 코딩을 해버렸음...
+/// AI 무기 스크립트는 다시...
+/// </summary>
 namespace Black
 {
     namespace Weapone
@@ -21,6 +27,9 @@ namespace Black
             string itemIconPath = ""; //아이템 아이콘 경로
 
             int weaponeState = 0; //무기 형태 0 권총 1 AR 2 SG
+
+            int nLevel = 1; //일정 레벨이 오르면 외형이 변경된다
+            int nMaxLevel = 30; //레벨 최대
 
             //데미지 최소 수치1 ~최소 수치2 중 랜덤 결정
             //최대치도 같음 (같은 무기라도 최소에서 최대 데미지가 다르다)
@@ -212,6 +221,32 @@ namespace Black
                     weaponeState = value;
                 }
             }
+
+            public int NLevel
+            {
+                get
+                {
+                    return nLevel;
+                }
+
+                set
+                {
+                    nLevel = value;
+                }
+            }
+
+            public int NMaxLevel
+            {
+                get
+                {
+                    return nMaxLevel;
+                }
+
+                set
+                {
+                    nMaxLevel = value;
+                }
+            }
             #endregion
 
             private float fireRate = 0.01f; //발사간격
@@ -222,6 +257,7 @@ namespace Black
             string weaponeDataName;
 
             private PlayerCtrl playerCtrl;
+            private ItemManager itemManager;
 
             AudioSource _audio;
             [SerializeField,Header("0 사격, 1 재장전, 2 탄 없음")]
@@ -241,10 +277,12 @@ namespace Black
             [SerializeField, Header("재장전 딜레이 권총,소총 1.5, 샷건 0.5")]
             float reloadSpeed = 1.5f;
 
+            [SerializeField, Header("레벨 업 시 활성화 시킬 무기 파츠")]
+            GameObject[] partsObj;
+
             private void Awake()
             {
-                parsingData = GameObject.Find("ParSingData").GetComponent<ParsingData>();
-                
+                parsingData = GameObject.Find("ParSingData").GetComponent<ParsingData>();                
             }
 
             private void Start()
@@ -252,9 +290,13 @@ namespace Black
              //   Debug.Log("WeaponeCtrl");
                 ItemSearch(weaponeDataName); //무기 데이터 적용 
                 playerCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCtrl>();
+                itemManager = playerCtrl.GetComponent<ItemManager>();
+
                 _audio = GetComponent<AudioSource>();
 
                 hitParticle = hitEffect.GetComponentsInChildren<ParticleSystem>();
+
+                WeaponePartsAct(); //파츠 활성화
             }
 
             void ItemSearch(string name)
@@ -453,13 +495,27 @@ namespace Black
                 if (hit.transform.GetComponent<HitDmg>())
                 {
                     if (!hit.transform.GetComponent<HitDmg>().IsHeadDmg)
+                    {
                         hit.transform.GetComponent<HitDmg>().HitDamage(dmg);
+                        itemManager.NUpgradePoint += 10;
+                    }
+                        
 
                     if (hit.transform.GetComponent<HitDmg>().IsHeadDmg)
+                    {
                         hit.transform.GetComponent<HitDmg>().HeadDamage(dmg);
+                        itemManager.NUpgradePoint += 50;
+                    }
+                        
 
                     playerCtrl.PlayerUI.EnemyHpInfo(hit.transform.GetComponent<CharactersData>().Hp,
                         hit.transform.GetComponent<CharactersData>().MaxHp);
+                }
+
+                //적 수류탄 비활성화
+                if(hit.transform.tag.Equals("EnemyGrenade"))
+                {
+                    hit.transform.gameObject.SetActive(false);
                 }
             }
 
@@ -474,18 +530,28 @@ namespace Black
 
                 if(hit.transform.tag.Equals("Grenade"))
                 {
-                    playerCtrl.GetComponent<ItemManager>().NGrenadeCount++;
-                    playerCtrl.GetComponent<ItemManager>().GrenadeCountText();
+                    if(playerCtrl.GetComponent<ItemManager>().NGrenadeCount <
+                        playerCtrl.GetComponent<ItemManager>().NMaxGrenadeCount)
+                    {
+                        playerCtrl.GetComponent<ItemManager>().NGrenadeCount++;
+                        playerCtrl.GetComponent<ItemManager>().GrenadeCountText();
 
-                    hit.transform.gameObject.SetActive(false);
+                        hit.transform.gameObject.SetActive(false);
+
+                    }
                 }
 
                 if(hit.transform.tag.Equals("Recovery"))
                 {
-                    playerCtrl.GetComponent<ItemManager>().NRecoveryCount++;
-                    playerCtrl.GetComponent<ItemManager>().RecoveryCountText();
+                    if(playerCtrl.GetComponent<ItemManager>().NRecoveryCount <
+                        playerCtrl.GetComponent<ItemManager>().NMaxRecorveryCount)
+                    {
+                        playerCtrl.GetComponent<ItemManager>().NRecoveryCount++;
+                        playerCtrl.GetComponent<ItemManager>().RecoveryCountText();
 
-                    hit.transform.gameObject.SetActive(false);
+                        hit.transform.gameObject.SetActive(false);
+                    }
+                    
                 }
             }
 
@@ -502,11 +568,11 @@ namespace Black
                 //8번 랜덤 방향으로 발사
                 for (int i = 0; i < 8; i++)
                 {
-                    if (Physics.Raycast(playerCtrl.FirePosTr.position, playerCtrl.FirePosTr.forward + Random.onUnitSphere * 0.2f,
+                    if (Physics.Raycast(playerCtrl.FirePosTr.position, playerCtrl.FirePosTr.forward + Random.onUnitSphere * 0.1f,
                     out hit, 500))
                     {
                         HitDamageValue(hit);
-
+                        HitItemPickUp(hit);
                     }
 
                 }
@@ -541,7 +607,26 @@ namespace Black
                 StartCoroutine(ReloadDelay());
             }
 
+            /// <summary>
+            /// 일정 레벨이 되면 파츠 활성화
+            /// </summary>
+            public void WeaponePartsAct()
+            {
+                if(NLevel == 10)
+                {
+                    partsObj[0].SetActive(true);
+                }
 
+                if(NLevel == 20)
+                {
+                    partsObj[1].SetActive(true);
+                }
+
+                if(NLevel == 30)
+                {
+                    partsObj[2].SetActive(true);
+                }
+            }
         }
 
     }

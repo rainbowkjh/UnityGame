@@ -45,9 +45,20 @@ namespace Black
             {
                 //타겟 지점에 색을 지정한다(플레이어와 적 캐릭터의 이동 경로 색을 다르게 한다)
                 if (movePos.IsPlayerPos)
-                    Handles.color = Color.blue;
+                {
+                    if(!movePos.IsEvent)
+                    {
+                        Handles.color = Color.blue;
+                    }
+                    else if(movePos.IsEvent)
+                    {
+                        Handles.color = Color.green;
+                    }
+                }
                 else if (!movePos.IsPlayerPos)
+                {
                     Handles.color = Color.red;
+                }                    
 
                 Handles.CubeCap(0, movePos.transform.position, Quaternion.identity, 0.5f);
 

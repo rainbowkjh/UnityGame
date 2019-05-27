@@ -1,4 +1,5 @@
-﻿using Black.Weapone;
+﻿using Black.Manager;
+using Black.Weapone;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,8 +22,19 @@ namespace Black
         {
             PlayerCtrl player;
 
+            //현재 소지량(테스트 후 인스펙터 창에서 닫을것!)
+            [SerializeField]
             int nGrenadeCount = 0;
+            [SerializeField]
             int nRecoveryCount = 0;
+
+            //최대 소지량
+            int nMaxGrenadeCount = 3;
+            int nMaxRecorveryCount = 3;
+
+            //업그래이드 레벨(10까지)
+            int grenadeLevel = 1;
+            int recoveryLevel = 1;
 
             //데미지와 회복량은 업그래이드로 올릴 수 있다
             [SerializeField, Header("수류탄 데미지")]
@@ -41,12 +53,18 @@ namespace Black
             [SerializeField, Header("수류탄 타격 지역(coll)")]
             GreadeHitColl greadeColl;
 
+            [SerializeField, Header("업그래이드 포인트")]
+            int nUpgradePoint = 0;
+
             private void Start()
             {
                 player = GetComponent<PlayerCtrl>();
 
                 GrenadeCountText();
                 RecoveryCountText();
+
+                //데이터 로드
+                ItemDataLoad();
             }
 
             #region Set,Get
@@ -76,6 +94,97 @@ namespace Black
                 }
             }
 
+            public float GreadeDMG
+            {
+                get
+                {
+                    return greadeDMG;
+                }
+
+                set
+                {
+                    greadeDMG = value;
+                }
+            }
+
+            public float RecoveryHP
+            {
+                get
+                {
+                    return recoveryHP;
+                }
+
+                set
+                {
+                    recoveryHP = value;
+                }
+            }
+
+            public int NMaxGrenadeCount
+            {
+                get
+                {
+                    return nMaxGrenadeCount;
+                }
+
+                set
+                {
+                    nMaxGrenadeCount = value;
+                }
+            }
+
+            public int NMaxRecorveryCount
+            {
+                get
+                {
+                    return nMaxRecorveryCount;
+                }
+
+                set
+                {
+                    nMaxRecorveryCount = value;
+                }
+            }
+
+            public int GrenadeLevel
+            {
+                get
+                {
+                    return grenadeLevel;
+                }
+
+                set
+                {
+                    grenadeLevel = value;
+                }
+            }
+
+            public int RecoveryLevel
+            {
+                get
+                {
+                    return recoveryLevel;
+                }
+
+                set
+                {
+                    recoveryLevel = value;
+                }
+            }
+
+            public int NUpgradePoint
+            {
+                get
+                {
+                    return nUpgradePoint;
+                }
+
+                set
+                {
+                    nUpgradePoint = value;
+                }
+            }
+
             #endregion
 
             /// <summary>
@@ -83,7 +192,7 @@ namespace Black
             /// </summary>
             public void GrenadeCountText()
             {
-                grenadeText.text = NGrenadeCount.ToString();
+                grenadeText.text = NGrenadeCount + "/<color=#00ff00>" + NMaxGrenadeCount + "</color>";
             }
 
             /// <summary>
@@ -91,7 +200,7 @@ namespace Black
             /// </summary>
             public void RecoveryCountText()
             {
-                recoveryText.text = NRecoveryCount.ToString();
+                recoveryText.text = NRecoveryCount + "/<color=#00ff00>" + NMaxRecorveryCount + "</color>";
             }
 
             /// <summary>
@@ -104,7 +213,7 @@ namespace Black
                     NGrenadeCount--;
                     GrenadeCountText();
 
-                    greadeColl.GreadeDMG = greadeDMG; //데미지 값 전달
+                    greadeColl.GreadeDMG = GreadeDMG; //데미지 값 전달
                     greadeColl.IsAttack = true; //사용
 
                     greadeColl.ExplosionPaly(); //파티클 실행
@@ -120,7 +229,7 @@ namespace Black
             /// <returns></returns>
             IEnumerator GreadeDelay()
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
                 greadeColl.IsAttack = false;
             }
 
@@ -129,13 +238,40 @@ namespace Black
             /// </summary>
             public void UseRecovery()
             {
-                if(NRecoveryCount >0)
+                if(NRecoveryCount > 0 &&
+                    player.Hp < player.MaxHp)
                 {
                     NRecoveryCount--;
-                    player.Hp += recoveryHP;
+                    player.Hp += RecoveryHP;
+
+                    if (player.Hp >= player.MaxHp)
+                    {
+                        player.Hp = player.MaxHp;
+                    }
+
                     RecoveryCountText();
                     player.PlayerUI.CurHP(player.Hp, player.MaxHp);
                 }
+            }
+
+            /// <summary>
+            /// 로드 데이터 적용
+            /// </summary>
+            void ItemDataLoad()
+            {
+                nGrenadeCount = GameManager.INSTANCE.playerData.nGrenadeCount;
+                nRecoveryCount = GameManager.INSTANCE.playerData.nRecoveryCount;
+                nMaxGrenadeCount = GameManager.INSTANCE.playerData.nMaxGrenadeCount;
+                nMaxRecorveryCount = GameManager.INSTANCE.playerData.nMaxRecorveryCount;
+                grenadeLevel = GameManager.INSTANCE.playerData.grenadeLevel;
+                recoveryLevel = GameManager.INSTANCE.playerData.recoveryLevel;
+                greadeDMG = GameManager.INSTANCE.playerData.greadeDMG;
+                recoveryHP = GameManager.INSTANCE.playerData.recoveryHP;
+                nUpgradePoint = GameManager.INSTANCE.playerData.nUpgradePoint;
+
+                RecoveryCountText();
+                GrenadeCountText();
+                
             }
 
         }

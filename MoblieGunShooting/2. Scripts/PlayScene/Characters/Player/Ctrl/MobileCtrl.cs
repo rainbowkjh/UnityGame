@@ -36,25 +36,26 @@ namespace Black
             [SerializeField, Header("탑승 상태에서 무기 교체 버튼을 비활성화")]
             GameObject attackBtn;
 
+            public int WeaponeID
+            {
+                get
+                {
+                    return weaponeID;
+                }
+
+                set
+                {
+                    weaponeID = value;
+                }
+            }
+
             void Start()
             {
               //  Debug.Log("MobileCtrl");
                 playerCtrl = GetComponent<PlayerCtrl>();
                 weaponeManager = GetComponent<WeaponeManager>();
-               
-                if(playerCtrl.IsDrive)
-                {
-                    weaponeManager.WeaponeChange(3);
-                    weaponeID = 3;
-                    attackBtn.SetActive(false);
-                }
-                if(!playerCtrl.IsDrive)
-                {
-                    weaponeID = 0;
-                    weaponeManager.WeaponeChange(0);
-                    attackBtn.SetActive(true);
-                }
 
+                DriveCheck(); //탑승 상태 확인
 
             }
 
@@ -65,8 +66,8 @@ namespace Black
                 if(!GameManager.INSTANCE.system.isPause)
                 {
                     //시작 시 현재 사용 중인 무기의 정보를 출력한다
-                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
-                          weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
+                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(WeaponeID),
+                          weaponeManager.GetWeaponeMinDmg(WeaponeID), weaponeManager.GetWeaponeMaxDmg(WeaponeID));
 
                     //캐릭터가 우워 있는 상태에서 게임 시작 시
                     //일어나는 애니메이션을 실행
@@ -75,9 +76,11 @@ namespace Black
                     //일어나는 연출을 실행하지 않을떄
                     if (playerCtrl.IsLive && !playerCtrl.IsRiseEvent)
                     {
+                    //    DriveCheck(); //탑승 상태 확인
+
                         ViewJoystick();
 
-                        if(!playerCtrl.IsStop)
+                        if (!playerCtrl.IsStop)
                         {
                             playerCtrl.PlayerNextMove();
                         }
@@ -104,6 +107,7 @@ namespace Black
                     {
                         //FadeOut
                         playerCtrl.FadeOutCg.FadeOutPlay();
+
                     }
 
                     else if(!playerCtrl.IsLive)
@@ -111,8 +115,33 @@ namespace Black
                         playerCtrl.FadeOutCg.GameOverFade();
                     }
 
+                    //피격 시 Post 효과
+                    if(playerCtrl.PostCam.IsPostSwitch)
+                    {
+                        playerCtrl.PostCam.PainCam();
+                    }
+
                 }
                 
+            }
+
+            /// <summary>
+            /// 탑승상태 확인
+            /// </summary>
+            void DriveCheck()
+            {
+                if (playerCtrl.IsDrive)
+                {
+                    weaponeManager.WeaponeChange(3);
+                    WeaponeID = 3;
+                    attackBtn.SetActive(false);
+                }
+                if (!playerCtrl.IsDrive)
+                {
+                    WeaponeID = 0;
+                    weaponeManager.WeaponeChange(0);
+                    attackBtn.SetActive(true);
+                }
             }
 
             void ViewJoystick()
@@ -166,7 +195,7 @@ namespace Black
             public void FireBtn()
             {
                 //Debug.Log("Mobile Fire");
-                weaponeManager.WeaponePos[weaponeID].GetComponentInChildren<WeaponeCtrl>().Fire();                
+                weaponeManager.WeaponePos[WeaponeID].GetComponentInChildren<WeaponeCtrl>().Fire();                
             }
 
             /// <summary>
@@ -174,7 +203,7 @@ namespace Black
             /// </summary>
             public void ReloadBtn()
             {
-                weaponeManager.WeaponePos[weaponeID].GetComponentInChildren<WeaponeCtrl>().Reload();
+                weaponeManager.WeaponePos[WeaponeID].GetComponentInChildren<WeaponeCtrl>().Reload();
             }
 
             /// <summary>
@@ -184,21 +213,21 @@ namespace Black
             {
                 if(!playerCtrl.IsReload)
                 {
-                    weaponeID = 0;
+                    WeaponeID = 0;
 
                     //new Vector3(0f, -2.2f, 0.5f);
                     playerObj.transform.localPosition = new Vector3(0f, -2.2f, 0.5f);
 
                     //무기 활성화
-                    weaponeManager.WeaponeChange(weaponeID);
+                    weaponeManager.WeaponeChange(WeaponeID);
                     //애니메이션
-                    playerCtrl.AniCtrl.WeaponeChange(weaponeID);
+                    playerCtrl.AniCtrl.WeaponeChange(WeaponeID);
 
-                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
-                      weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
+                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(WeaponeID),
+                      weaponeManager.GetWeaponeMinDmg(WeaponeID), weaponeManager.GetWeaponeMaxDmg(WeaponeID));
 
                     //탄 정보 변경
-                    playerCtrl.PlayerUI.AmmoInfo(weaponeManager.GetWeaponeAmmo(weaponeID), weaponeManager.GetWeaponeMaxAmmo(weaponeID));
+                    playerCtrl.PlayerUI.AmmoInfo(weaponeManager.GetWeaponeAmmo(WeaponeID), weaponeManager.GetWeaponeMaxAmmo(WeaponeID));
                 }
 
             }
@@ -210,16 +239,16 @@ namespace Black
             {
                 if (!playerCtrl.IsReload)
                 {
-                    weaponeID = 1;                    
+                    WeaponeID = 1;                    
                     playerObj.transform.localPosition = new Vector3(0f, -2.2f, 0.0f);
 
-                    weaponeManager.WeaponeChange(weaponeID);
-                    playerCtrl.AniCtrl.WeaponeChange(weaponeID);
+                    weaponeManager.WeaponeChange(WeaponeID);
+                    playerCtrl.AniCtrl.WeaponeChange(WeaponeID);
 
-                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
-                      weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
+                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(WeaponeID),
+                      weaponeManager.GetWeaponeMinDmg(WeaponeID), weaponeManager.GetWeaponeMaxDmg(WeaponeID));
 
-                    playerCtrl.PlayerUI.AmmoInfo(weaponeManager.GetWeaponeAmmo(weaponeID), weaponeManager.GetWeaponeMaxAmmo(weaponeID));
+                    playerCtrl.PlayerUI.AmmoInfo(weaponeManager.GetWeaponeAmmo(WeaponeID), weaponeManager.GetWeaponeMaxAmmo(WeaponeID));
                 }
                 //Debug.Log("Use Weapone  :" + weaponeManager.UseWeapone);
             }
@@ -231,16 +260,16 @@ namespace Black
             {
                 if (!playerCtrl.IsReload)
                 {
-                    weaponeID = 2;
+                    WeaponeID = 2;
                     playerObj.transform.localPosition = new Vector3(0f, -2.2f, 0.0f);
 
-                    weaponeManager.WeaponeChange(weaponeID);
-                    playerCtrl.AniCtrl.WeaponeChange(weaponeID);
+                    weaponeManager.WeaponeChange(WeaponeID);
+                    playerCtrl.AniCtrl.WeaponeChange(WeaponeID);
 
-                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(weaponeID),
-                      weaponeManager.GetWeaponeMinDmg(weaponeID), weaponeManager.GetWeaponeMaxDmg(weaponeID));
+                    playerCtrl.PlayerUI.CurWeaponeInfo(weaponeManager.GetWeaponeName(WeaponeID),
+                      weaponeManager.GetWeaponeMinDmg(WeaponeID), weaponeManager.GetWeaponeMaxDmg(WeaponeID));
 
-                    playerCtrl.PlayerUI.AmmoInfo(weaponeManager.GetWeaponeAmmo(weaponeID), weaponeManager.GetWeaponeMaxAmmo(weaponeID));
+                    playerCtrl.PlayerUI.AmmoInfo(weaponeManager.GetWeaponeAmmo(WeaponeID), weaponeManager.GetWeaponeMaxAmmo(WeaponeID));
                 }
             }
 

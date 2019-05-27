@@ -1,5 +1,8 @@
 ﻿using Black.CameraUtil;
+using Black.DmgManager;
+using Black.Manager;
 using Black.UI;
+using Black.Weapone;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,6 +61,9 @@ namespace Black
             MarkerCam markerCamTr;
 
             float tempSpeed = 0;
+
+            [SerializeField, Header("피격 시 Post효과를 위해")]
+            shakeCamera postCam;
 
             #region Set,Get
 
@@ -218,6 +224,19 @@ namespace Black
                 }
             }
 
+            public shakeCamera PostCam
+            {
+                get
+                {
+                    return postCam;
+                }
+
+                set
+                {
+                    postCam = value;
+                }
+            }
+
             #endregion
 
             private void Awake()
@@ -226,13 +245,15 @@ namespace Black
                 AniCtrl = GetComponent<AniCtrl>();
                 PlayerUI = GetComponent<PlayerUI>();
 
-                PlayerUI.CurHP(Hp, MaxHp);
-
                 FadeOutCg = GetComponent<FadeOut>();
 
             }
 
-
+            private void Start()
+            {
+                PlayerDataLoad();
+                PlayerUI.CurHP(Hp, MaxHp);
+            }
 
             /// <summary>
             /// 에임이 적을 바라보면 정보를 보여준다 
@@ -302,6 +323,42 @@ namespace Black
 
               //  deadCamera.transform.rotation = Quaternion.identity;
             }
+
+            /// <summary>
+            /// 적의 폭탄을 감지한다
+            /// </summary>
+            /// <param name="other"></param>
+            private void OnTriggerStay(Collider other)
+            {
+                if (other.tag.Equals("EnemyGrenadeArea"))
+                {
+                    if (other.GetComponent<GreadeHitColl>().IsAttack)
+                    {
+                        //Debug.Log("Grenade Hit");
+                        GetComponent<HitDmg>().HitDamage(other.GetComponent<GreadeHitColl>().GreadeDMG);
+
+                        other.GetComponent<GreadeHitColl>().IsAttack = false; //연속 데미지를 막기 위해 바로 false
+
+                        playerUI.CurHP(Hp, MaxHp);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 플레이어 데이터 초기화
+            /// </summary>
+            void PlayerDataLoad()
+            {
+                //데이터를 불러와 싱글턴에 저장된 정보를 가지고 초기화 시킨다 
+                Hp = GameManager.INSTANCE.playerData.hp;
+                MaxHp = GameManager.INSTANCE.playerData.maxHp;
+                Speed= GameManager.INSTANCE.playerData.speed;
+                IsLive= GameManager.INSTANCE.playerData.isLive;
+                IsFire= GameManager.INSTANCE.playerData.isFire;
+                IsReload= GameManager.INSTANCE.playerData.isReload;
+                IsStop= GameManager.INSTANCE.playerData.isStop;
+            }
+
         }
 
     }

@@ -21,6 +21,8 @@ namespace Black
             Transform playerObj;
 
             WeaponeManager weaponeManager;
+            
+            ItemManager itemManager;
 
             float mouseX = 0.0f;
             float mouseY = 0.0f;
@@ -34,6 +36,7 @@ namespace Black
             {
                 playerCtrl = GetComponent<PlayerCtrl>();
                 weaponeManager = GetComponent<WeaponeManager>();
+                itemManager = GetComponent<ItemManager>();
 
                 if (playerCtrl.IsDrive)
                 {
@@ -70,6 +73,10 @@ namespace Black
 
                         GunFire();
                         GunReload();
+                        GrenadeUse();
+                        RecoveryUse();
+
+                        Test2();
 
                         playerCtrl.EnemyInfoPrint();
                     }
@@ -199,6 +206,33 @@ namespace Black
 
             }
 
+            /// <summary>
+            /// 폭발!
+            /// </summary>
+            void GrenadeUse()
+            {
+                if(Input.GetKeyDown(KeyCode.S))
+                {
+                    itemManager.UseGrenade();
+                }
+            }
+
+            void RecoveryUse()
+            {
+                if(Input.GetKeyDown(KeyCode.D))
+                {
+                    itemManager.UseRecovery();
+                }
+            }
+
+            void Test2()
+            {
+                if(Input.GetKeyDown(KeyCode.Z))
+                {
+                    playerCtrl.MaxHp = 100000;
+                    playerCtrl.Hp = 100000;
+                }
+            }
 
             void Test()
             {

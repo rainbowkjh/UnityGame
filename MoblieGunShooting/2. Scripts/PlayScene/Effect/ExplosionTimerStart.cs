@@ -30,6 +30,12 @@ namespace Black
                 
             }
 
+            private void OnTriggerExit(Collider other)
+            {
+                if (other.tag.Equals(objTag))
+                    isEnter = false;
+            }
+
         }
 
     }

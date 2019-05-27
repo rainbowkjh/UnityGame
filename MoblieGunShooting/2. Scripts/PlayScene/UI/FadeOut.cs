@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Black.Manager;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,6 +39,17 @@ namespace Black
                 }
             }
 
+            #region 저장 할 데이터
+            [Space]
+            [SerializeField, Header("저장 데이터")]
+            PlayerCtrl player;
+            [SerializeField]
+            WeaponeManager weaponeManager;
+            [SerializeField]
+            ItemManager itemManager;
+            #endregion
+
+           
             private void Start()
             {
                 Cg.alpha = 0.0f; 
@@ -75,6 +87,8 @@ namespace Black
                 if(Cg.alpha == 1.0f)
                 {
                     StartCoroutine(NextStage());
+
+                    Manager.GameManager.INSTANCE.ItemSave(player, itemManager, nextStageName);
                 }
             }
 
@@ -111,10 +125,6 @@ namespace Black
             {
                 mainBtn.SetActive(true);
             }
-
-            //메인으로 넘기는 버튼 함수
-
-
 
         }
 

@@ -71,6 +71,12 @@ namespace Black
             //효과음
             public void SfxPlay()
             {
+                if(_audio == null)
+                {
+                    _audio = GetComponent<AudioSource>();
+                }
+
+                
                 _audio.volume = GameManager.INSTANCE.volume.sfx;
 
                 _audio.PlayOneShot(_sfx[0]);

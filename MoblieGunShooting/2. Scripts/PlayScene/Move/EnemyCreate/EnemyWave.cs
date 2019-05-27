@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Black.Manager;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,6 +56,8 @@ namespace Black
                     {
                         //Wave 시작
                         isStart = true;
+
+                        GameManager.INSTANCE.NEnemyCount += createEnemy.Length;
                     }
                 }                
 

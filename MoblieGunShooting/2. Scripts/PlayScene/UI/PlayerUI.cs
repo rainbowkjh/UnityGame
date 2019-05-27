@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Black.Characters;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,9 +39,14 @@ namespace Black
             [SerializeField, Header("피격 시 데미지 수치")]
             Text painText;
 
-            
+            [SerializeField, Header("Point Text")]
+            Text pointText;
+
+            ItemManager itemManager;
+
             private void Start()
             {
+                itemManager = GetComponent<ItemManager>(); //UpgradePoint를 가져온다
                 enemyInfoObj.SetActive(false);
 
                 //피격 당할 때 이미지 안보이게 설정
@@ -189,6 +195,13 @@ namespace Black
                 cg.alpha = 0.0f;
             }
 
+            /// <summary>
+            /// 업그래이드 포인트 수치를 보여준다
+            /// </summary>
+            public void PointValue()
+            {
+                pointText.text = itemManager.NUpgradePoint.ToString();
+            }
    
         }
 

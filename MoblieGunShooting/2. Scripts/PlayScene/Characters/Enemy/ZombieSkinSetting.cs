@@ -22,7 +22,7 @@ namespace Black
             Prostitute, Roadworker, Robber,
             Runner, Santa, Shopkeeper,
             Soldier, Streetman, Tourist,
-            Trucker,
+            Trucker, Random,
             
         }
 
@@ -148,7 +148,9 @@ namespace Black
                     case ZombieSkin.Trucker:
                         skinIndex = 27;
                         break;
-                    
+                    case ZombieSkin.Random:
+                        skinIndex = UnityEngine.Random.Range(0, 27);
+                        break;
                 }
 
                 zombieSkinObj[skinIndex].SetActive(true);
